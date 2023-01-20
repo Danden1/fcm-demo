@@ -49,7 +49,7 @@ public class DBMessageBoxTest {
             messageBox.collectMessage(message);
         }
 
-        assertEquals(dbMessageBoxRepoHelper.findAll().size(), repeatCollect);
+        assertEquals(repeatCollect, dbMessageBoxRepoHelper.findAll().size());
     }
 
 

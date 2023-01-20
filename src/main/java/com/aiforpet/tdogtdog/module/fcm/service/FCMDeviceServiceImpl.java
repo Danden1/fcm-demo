@@ -23,7 +23,9 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     @Override
     public String updateToken(String beforeDevice, String afterDevice) {
         FCMDevice fcmDevice = fcmDeviceRepository.findAllByDevice(beforeDevice);
+
         fcmDevice.updateDevice(afterDevice);
+        fcmDeviceRepository.save(fcmDevice);
 
         return fcmDevice.getDevice();
     }
