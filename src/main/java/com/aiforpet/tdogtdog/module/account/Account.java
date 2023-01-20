@@ -1,0 +1,24 @@
+package com.aiforpet.tdogtdog.module.account;
+
+
+import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column
+    private String email;
+
+
+}
