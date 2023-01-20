@@ -21,6 +21,7 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     }
 
     @Override
+    @Transactional
     public String updateToken(String beforeDevice, String afterDevice) {
         FCMDevice fcmDevice = fcmDeviceRepository.findAllByDevice(beforeDevice);
 
@@ -31,6 +32,7 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     }
 
     @Override
+    @Transactional
     public Instant updateTime(String device) {
         FCMDevice fcmDevice = fcmDeviceRepository.findAllByDevice(device);
         fcmDevice.updateTime();
@@ -39,10 +41,13 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     }
 
     @Override
+    @Transactional
     public Map<NotificationType, Boolean> updateAccountNotification(Account account, NotificationType notificationType, NotificationSetting notificationSetting) {
         Notification notification = notificationRepository.findByAccount(account);
 
         notification.updateNotification(notificationType, notificationSetting);
+
+        notificationRepository.save(notification);
 
         Map<NotificationType, Boolean> map = new HashMap<>();
 
@@ -52,6 +57,7 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     }
 
     @Override
+    @Transactional
     public String createDevice(Account account, String device, DeviceType deviceType) {
         FCMDevice fcmDevice = new FCMDevice(account, device, deviceType);
 
@@ -59,8 +65,6 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
 
         return fcmDevice.getDevice();
     }
-
-
 
 
 }

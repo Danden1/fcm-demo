@@ -24,7 +24,7 @@ public class AccountHelper {
 
 
     @Transactional
-    public void createAccount(String email){
+    public Account createAccount(String email){
         Account account = new Account();
         account.setEmail(email);
 
@@ -35,6 +35,8 @@ public class AccountHelper {
 
         testAccountRepository.save(account);
         notificationRepository.save(notification);
+
+        return account;
     }
 
     @Transactional
