@@ -8,7 +8,9 @@ import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceScheduler;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceType;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -30,6 +32,7 @@ public class DeviceSchedulerTest {
 
     private final String email = "test";
 
+    @Autowired
     public DeviceSchedulerTest(TestAccountRepository testAccountRepository, TestFCMDeviceRepository testFCMDeviceRepository, AccountHelper accountHelper, FCMDeviceHelper fcmDeviceHelper, DeviceScheduler deviceScheduler) {
         this.testAccountRepository = testAccountRepository;
         this.testFCMDeviceRepository = testFCMDeviceRepository;
@@ -38,6 +41,8 @@ public class DeviceSchedulerTest {
         this.deviceScheduler = deviceScheduler;
     }
 
+
+    @BeforeEach
     public void deleteAll(){
         testAccountRepository.deleteAllInBatch();
     }
