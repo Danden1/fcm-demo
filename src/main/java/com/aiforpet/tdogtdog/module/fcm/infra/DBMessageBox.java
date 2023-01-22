@@ -5,12 +5,15 @@ import com.aiforpet.tdogtdog.module.fcm.domain.MessageBox;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 
 
 @Component
+@EnableAsync
 public class DBMessageBox implements MessageBox {
 
 
@@ -24,6 +27,7 @@ public class DBMessageBox implements MessageBox {
 
     @Override
     @Transactional
+    @Async
     public void collectMessage(Message message) {
 
         MessageEntity messageEntity = messageEntityMapper.mapMessageToMessageEntity(message);
