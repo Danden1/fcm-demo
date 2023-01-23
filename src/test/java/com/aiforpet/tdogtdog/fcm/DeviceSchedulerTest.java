@@ -50,8 +50,8 @@ public class DeviceSchedulerTest {
     @Test
     public void testDeleteOldDevice(){
         List<String> devices = new ArrayList<>();
-        Instant oldTime = Instant.now().minus(2, ChronoUnit.MONTHS);
-        oldTime.minus(1, ChronoUnit.MINUTES);
+        Instant oldTime = Instant.now().minus(60, ChronoUnit.DAYS);
+        oldTime.minus(5, ChronoUnit.MINUTES);
 
         devices.add("123");
         devices.add("124");
@@ -75,6 +75,6 @@ public class DeviceSchedulerTest {
 
         deviceScheduler.deleteOldDevice();
 
-        assertEquals(2, testFCMDeviceRepository.findAll());
+        assertEquals(2, testFCMDeviceRepository.findAll().size());
     }
 }
