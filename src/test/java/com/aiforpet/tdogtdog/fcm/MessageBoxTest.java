@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class DBMessageBoxTest {
+public class MessageBoxTest {
 
     private final MessageBoxRepository messageBoxRepository;
     private final MessageBox messageBox;
@@ -26,7 +26,7 @@ public class DBMessageBoxTest {
 
 
     @Autowired
-    public DBMessageBoxTest(MessageBoxRepository messageBoxRepository, MessageBox messageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper) {
+    public MessageBoxTest(MessageBoxRepository messageBoxRepository, MessageBox messageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper) {
         this.messageBoxRepository = messageBoxRepository;
         this.messageBox = messageBox;
         this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;

@@ -24,10 +24,10 @@ public class FCMDevice {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String device;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private DeviceType deviceType;
 
