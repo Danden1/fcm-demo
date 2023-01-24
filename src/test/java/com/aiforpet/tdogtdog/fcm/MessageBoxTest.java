@@ -6,10 +6,7 @@ import com.aiforpet.tdogtdog.fcm.helper.MessageMaker;
 import com.aiforpet.tdogtdog.fcm.helper.TestAccountRepository;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.infra.MessageBoxRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -43,16 +40,21 @@ public class MessageBoxTest {
 
     @BeforeAll
     public static void createAccount(@Autowired AccountHelper accountHelper){
-        accountHelper.deleteAccount();
         accountHelper.createAccount(email);
     }
-    @BeforeEach
+
+    @AfterAll
+    public static void deleteAccount(@Autowired AccountHelper accountHelper){
+        accountHelper.deleteAccount();
+    }
+
     @AfterEach
     public void clearMessageBoxDb(){
         dbMessageBoxRepoHelper.deleteAllInBatch();
-
     }
+
     @Test
+    @DisplayName("5개 메시지 메시지 박스에 들어가는 지 테스트")
     public void testPutMessage(){
         int repeatCollect = 5;
 

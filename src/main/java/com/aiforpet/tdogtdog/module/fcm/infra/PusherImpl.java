@@ -46,7 +46,6 @@ public class PusherImpl implements Pusher {
     public void takeOfMessage(){
         List<MessageEntity> messageEntities = messageBoxRepository.findTop8ByOrderByIdAsc();
 
-
         Thread[] threads = new Thread[messageEntities.size()];
         int i = 0;
 
@@ -60,7 +59,6 @@ public class PusherImpl implements Pusher {
             catch(PushTimeException e){
                 MessageEntity copyMessageEntity =new MessageEntity();
                 copyMessageEntity.copy(messageEntity);
-
                 messageBoxRepository.save(copyMessageEntity);
                 continue;
             }
@@ -80,6 +78,7 @@ public class PusherImpl implements Pusher {
         }
 
         for(int j = 0; j<i; j++){
+
             try {
                 threads[j].join();
             } catch (InterruptedException e) {

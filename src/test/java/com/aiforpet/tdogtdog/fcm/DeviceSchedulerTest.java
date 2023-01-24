@@ -8,7 +8,9 @@ import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceScheduler;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceType;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,12 +44,13 @@ public class DeviceSchedulerTest {
     }
 
 
-    @BeforeEach
+    @AfterEach
     public void deleteAll(){
         testAccountRepository.deleteAllInBatch();
     }
 
     @Test
+    @DisplayName("4개 device 중, 60일 지난 2개의 device 삭제되는지 테스트")
     public void testDeleteOldDevice(){
         List<String> devices = new ArrayList<>();
         Instant oldTime = Instant.now().minus(60, ChronoUnit.DAYS);

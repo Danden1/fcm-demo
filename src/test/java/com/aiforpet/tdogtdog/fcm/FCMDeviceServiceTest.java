@@ -10,10 +10,7 @@ import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
 import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSetting;
 import com.aiforpet.tdogtdog.module.fcm.domain.NotificationType;
 import com.aiforpet.tdogtdog.module.fcm.service.FCMDeviceService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -43,7 +40,7 @@ public class FCMDeviceServiceTest {
         this.testNotificationRepository = testNotificationRepository;
     }
 
-    @BeforeEach
+    @AfterEach
     public void deleteAll(){
         testAccountRepository.deleteAllInBatch();
     }
@@ -125,7 +122,7 @@ public class FCMDeviceServiceTest {
     class UpdateNotificationTest{
         private final String token = "123";
         @Test
-        @DisplayName("important 알림 끄는 경우 테스트(default는 ON)")
+        @DisplayName("important 알림 꺼지는지 테스트(default는 ON)")
         public void testUpdateImportantNotification(){
             accountHelper.createAccount(email);
             Account account = testAccountRepository.findByEmail(email);

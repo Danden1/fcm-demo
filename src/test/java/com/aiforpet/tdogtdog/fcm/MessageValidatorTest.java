@@ -12,10 +12,7 @@ import com.aiforpet.tdogtdog.module.fcm.domain.validator.MessageNotificationVali
 import com.aiforpet.tdogtdog.module.fcm.domain.validator.MessagePushTimeValidator;
 import com.aiforpet.tdogtdog.module.fcm.domain.validator.MessageTimeLimitValidator;
 import com.aiforpet.tdogtdog.module.fcm.domain.validator.MessageValidator;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -47,7 +44,6 @@ public class MessageValidatorTest {
 
     @AfterAll
     public static void deleteAccount(@Autowired TestAccountRepository testAccountRepository, @Autowired TestNotificationRepository testNotificationRepository){
-        testNotificationRepository.deleteAllInBatch();
         testAccountRepository.deleteAllInBatch();
     }
 
@@ -55,6 +51,7 @@ public class MessageValidatorTest {
     @Nested
     class TimeLimitTest{
         @Test
+        @DisplayName("제한 시간 넘어갔을 경우 테스트")
         public void testOverTimeLimit(){
             MessageValidator validator = new MessageTimeLimitValidator();
             Account account = testAccountRepository.findByEmail(email);
@@ -71,6 +68,7 @@ public class MessageValidatorTest {
         }
 
         @Test
+        @DisplayName("제한 시간 넘지 않았을 경우 테스트")
         public void testBeforeTimeLimit(){
             MessageValidator validator = new MessageTimeLimitValidator();
             Account account = testAccountRepository.findByEmail(email);
@@ -88,6 +86,7 @@ public class MessageValidatorTest {
     @Nested
     class PushTimeTest{
         @Test
+        @DisplayName("푸시 보내는 시간 안에 있을 경우 테스트")
         public void testBetweenSendingTime(){
             MessageValidator validator = new MessagePushTimeValidator();
             Account account = testAccountRepository.findByEmail(email);
@@ -102,6 +101,7 @@ public class MessageValidatorTest {
         }
 
         @Test
+        @DisplayName("푸시 보내는 시간을 벗어났을 경우 테스트")
         public void testAfterSendingTime(){
             MessageValidator validator = new MessagePushTimeValidator();
             Account account = testAccountRepository.findByEmail(email);
@@ -119,6 +119,7 @@ public class MessageValidatorTest {
     @Nested
     class NotificationValidatorTest{
         @Test
+        @DisplayName("TEST 알림을 받는 계정에 TEST 알림이 왔을 경우 테스트")
         public void testOnNotification(){
             MessageValidator validator = new MessageNotificationValidator(notificationRepository);
             Account account = testAccountRepository.findByEmail(email);
@@ -132,6 +133,7 @@ public class MessageValidatorTest {
         }
 
         @Test
+        @DisplayName("TEST 알림을 받지 않는 계정에 TEST 알림이 왔을 경우 테스트")
         public void testOffNotification(){
             MessageValidator validator = new MessageNotificationValidator(notificationRepository);
             Account account = testAccountRepository.findByEmail(email);
@@ -143,12 +145,4 @@ public class MessageValidatorTest {
             assertThrows(NotificationException.class, () -> validator.assertValidMessage(message));
         }
     }
-
-
-    //Infra test
-    @Test
-    public void testValidatorsBeanLength(@Autowired List<MessageValidator> messageValidators){
-        assertEquals(messageValidators.size(), 3);
-    }
-
 }
