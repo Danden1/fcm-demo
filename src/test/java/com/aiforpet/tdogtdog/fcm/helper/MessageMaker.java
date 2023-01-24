@@ -10,63 +10,36 @@ import java.util.List;
 
 public class MessageMaker {
 
-    public List<Message> makeValidTestMessages(int numberOfMessage, Account account){
+    public Message makeValidTestMessage(String token, Account account){
         MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().plus(1, ChronoUnit.HOURS), RequestLocation.TEST_BETWEEN_TIME);
-        Receiver receiver = new Receiver("123", DeviceType.IOS, account);
-        List<Message> messages = new ArrayList<>();
+        Receiver receiver = new Receiver(token, DeviceType.IOS, account);
 
-        for(int i = 0; i < numberOfMessage; i++){
-            messages.add(new Message("hi", "hi", null, receiver, constraint));
-        }
-
-        return messages;
+        return new Message("hi", "hi", null, receiver, constraint);
     }
 
-    public List<Message> makeEventMessages(int numberOfMessage, Account account){
+    public Message makeEventMessage(String token, Account account){
         MessageConstraint constraint = new MessageConstraint(NotificationType.EVENT, ZonedDateTime.now().plus(1, ChronoUnit.HOURS), RequestLocation.TEST_BETWEEN_TIME);
-        Receiver receiver = new Receiver("123", DeviceType.IOS, account);
-        List<Message> messages = new ArrayList<>();
+        Receiver receiver = new Receiver(token, DeviceType.IOS, account);
 
-        for(int i = 0; i < numberOfMessage; i++){
-            messages.add(new Message("hi", "hi", null, receiver, constraint));
-        }
-
-        return messages;
+        return new Message("hi", "hi", null, receiver, constraint);
     }
 
-    public List<Message> makeOverSendingTimeAndEventMessages(int numberOfMessage, Account account){
-        MessageConstraint constraint = new MessageConstraint(NotificationType.EVENT, ZonedDateTime.now().plus(1, ChronoUnit.HOURS), RequestLocation.TEST_OVER_TIME);
-        Receiver receiver = new Receiver("123", DeviceType.IOS, account);
-        List<Message> messages = new ArrayList<>();
 
-        for(int i = 0; i < numberOfMessage; i++){
-            messages.add(new Message("hi", "hi", null, receiver, constraint));
-        }
-
-        return messages;
-    }
-
-    public List<Message> makeOverSendingTimeMessages(int numberOfMessage, Account account){
+    public Message makeOverSendingTimeMessage(String token, Account account){
         MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().plus(1, ChronoUnit.HOURS), RequestLocation.TEST_OVER_TIME);
-        Receiver receiver = new Receiver("123", DeviceType.IOS, account);
-        List<Message> messages = new ArrayList<>();
+        Receiver receiver = new Receiver(token, DeviceType.IOS, account);
 
-        for(int i = 0; i < numberOfMessage; i++){
-            messages.add(new Message("hi", "hi", null, receiver, constraint));
-        }
-
-        return messages;
+        return new Message("hi", "hi", null, receiver, constraint);
     }
 
-    public List<Message> makeOverTimeLimitMessages(int numberOfMessage, Account account){
+    public Message makeOverTimeLimitMessage(String token, Account account){
         MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().minus(1, ChronoUnit.HOURS), RequestLocation.TEST_BETWEEN_TIME);
-        Receiver receiver = new Receiver("123", DeviceType.IOS, account);
-        List<Message> messages = new ArrayList<>();
+        Receiver receiver = new Receiver(token, DeviceType.IOS, account);
 
-        for(int i = 0; i < numberOfMessage; i++){
-            messages.add(new Message("hi", "hi", null, receiver, constraint));
-        }
+        return new Message("hi", "hi", null, receiver, constraint);
+    }
 
-        return messages;
+    public String getPushMessage(String token){
+        return String.format("{\"message\":{\"notification\":{\"title\":\"hi\",\"body\":\"hi\"},\"token\":\"%s\",\"data\":null}}", token);
     }
 }

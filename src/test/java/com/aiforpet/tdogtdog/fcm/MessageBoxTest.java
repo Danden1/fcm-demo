@@ -58,10 +58,8 @@ public class MessageBoxTest {
     public void testPutMessage(){
         int repeatCollect = 5;
 
-        List<Message> messages = messageMaker.makeValidTestMessages(repeatCollect, testAccountRepository.findByEmail(email));
-
-        for(Message message : messages) {
-            messageBox.collectMessage(message);
+        for(int i = 0; i < repeatCollect; i++) {
+            messageBox.collectMessage(messageMaker.makeValidTestMessage("123", testAccountRepository.findByEmail(email)));
         }
 
         await().atMost(1, SECONDS)
