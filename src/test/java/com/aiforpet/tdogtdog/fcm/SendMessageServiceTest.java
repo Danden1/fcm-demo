@@ -44,7 +44,6 @@ public class SendMessageServiceTest {
         this.accountHelper = accountHelper;
         this.testNotificationRepository = testNotificationRepository;
         this.testAccountRepository = testAccountRepository;
-        this.executor = executor;
     }
 
     @BeforeEach
