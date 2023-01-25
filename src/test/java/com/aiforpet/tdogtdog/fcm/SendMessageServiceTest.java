@@ -36,8 +36,6 @@ public class SendMessageServiceTest {
     private final Map<String, Object> data = null;
 
 
-    private final ThreadPoolTaskExecutor executor;
-
     @Autowired
     public SendMessageServiceTest(SendMessageService sendMessageService, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, FCMDeviceHelper fcmDeviceHelper, AccountHelper accountHelper, TestNotificationRepository testNotificationRepository, TestAccountRepository testAccountRepository, ThreadPoolTaskExecutor executor) {
         this.sendMessageService = sendMessageService;
@@ -66,11 +64,11 @@ public class SendMessageServiceTest {
         otherDevices.add("127");
 
         for(String testDevice : testDevices){
-            fcmDeviceHelper.createDevice(testAccount, testDevice, DeviceType.IOS);
+            fcmDeviceHelper.createDevice(testAccount, testDevice, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
         }
 
         for(String otherDevice : otherDevices){
-            fcmDeviceHelper.createDevice(otherAccount, otherDevice, DeviceType.IOS);
+            fcmDeviceHelper.createDevice(otherAccount, otherDevice, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
         }
     }
 
@@ -104,6 +102,23 @@ public class SendMessageServiceTest {
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
+        }
+
+        @Test
+        @DisplayName("특정 위치(나라)의 모든 디바이스에 보낼 메시지가 박스에 들어가는 지 테스트")
+        void testSendToAllDevicesByLocation(){
+            Account testAccount = accountHelper.createAccount("test2");
+            fcmDeviceHelper.createDevice(testAccount, "456", DeviceType.IOS, RequestLocation.KOREA);
+
+            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, ZonedDateTime.now().plus(5, ChronoUnit.MINUTES));
+
+            await().atMost(1, SECONDS)
+                    .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
+
+            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.KOREA, ZonedDateTime.now().plus(5, ChronoUnit.MINUTES));
+
+            await().atMost(1, SECONDS)
+                    .untilAsserted(() -> assertEquals(6, dbMessageBoxRepoHelper.findAll().size()));
         }
     }
 

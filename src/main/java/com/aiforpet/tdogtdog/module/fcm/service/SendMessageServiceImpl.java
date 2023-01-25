@@ -41,7 +41,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         if(notificationType == NotificationType.EVENT)
             accounts = notificationRepository.findAccountByEvent();
 
-        List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByAccountIn(accounts);
+        List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByRequestLocationAndAccountIn(requestLocation, accounts);
 
         for(FCMDevice fcmDevice : fcmDevices){
             Receiver receiver = new Receiver(fcmDevice.getDevice(), fcmDevice.getDeviceType(), fcmDevice.getAccount());

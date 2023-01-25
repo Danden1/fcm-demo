@@ -58,8 +58,8 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
 
     @Override
     @Transactional
-    public String createDevice(Account account, String device, DeviceType deviceType) {
-        FCMDevice fcmDevice = new FCMDevice(account, device, deviceType);
+    public String createDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation) {
+        FCMDevice fcmDevice = new FCMDevice(account, device, deviceType, requestLocation);
 
         fcmDeviceRepository.save(fcmDevice);
 

@@ -3,6 +3,7 @@ package com.aiforpet.tdogtdog.fcm.helper;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceType;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
+import com.aiforpet.tdogtdog.module.fcm.domain.RequestLocation;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -18,8 +19,8 @@ public class FCMDeviceHelper {
     }
 
     @Transactional
-    public String createDevice(Account account, String device, DeviceType deviceType) {
-        FCMDevice fcmDevice = new FCMDevice(account, device, deviceType);
+    public String createDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation) {
+        FCMDevice fcmDevice = new FCMDevice(account, device, deviceType, requestLocation);
 
         testfcmDeviceRepository.save(fcmDevice);
 

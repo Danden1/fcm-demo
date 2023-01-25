@@ -31,14 +31,19 @@ public class FCMDevice {
     @Enumerated(EnumType.STRING)
     private DeviceType deviceType;
 
-    @Column
+    @Column(nullable = false)
     private Instant time;
 
-    public FCMDevice(Account account, String device, DeviceType deviceType){
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RequestLocation requestLocation;
+
+    public FCMDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation){
         this.account = account;
         this.device = device;
         this.deviceType = deviceType;
         this.time = Instant.now();
+        this.requestLocation = requestLocation;
     }
 
     public void updateTime(){

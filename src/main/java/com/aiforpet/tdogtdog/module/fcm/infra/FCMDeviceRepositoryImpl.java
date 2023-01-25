@@ -3,6 +3,7 @@ package com.aiforpet.tdogtdog.module.fcm.infra;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDeviceRepository;
+import com.aiforpet.tdogtdog.module.fcm.domain.RequestLocation;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -29,8 +30,8 @@ public class FCMDeviceRepositoryImpl implements FCMDeviceRepository {
     }
 
     @Override
-    public List<FCMDevice> findAllByAccountIn(List<Account> accounts) {
-        return jpaFCMDeviceRepository.findAllByAccountIn(accounts);
+    public List<FCMDevice> findAllByRequestLocationAndAccountIn(RequestLocation requestLocation, List<Account> accounts) {
+        return jpaFCMDeviceRepository.findAllByRequestLocationAndAccountIn(requestLocation, accounts);
     }
 
     @Override

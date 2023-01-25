@@ -8,6 +8,7 @@ import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceScheduler;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceType;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
+import com.aiforpet.tdogtdog.module.fcm.domain.RequestLocation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ public class DeviceSchedulerTest {
         Account account = accountHelper.createAccount(email);
 
         for(String device : devices) {
-            fcmDeviceHelper.createDevice(account, device, DeviceType.IOS);
+            fcmDeviceHelper.createDevice(account, device, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
         }
 
         FCMDevice fcmDevice = testFCMDeviceRepository.findByDevice(devices.get(3));

@@ -5,10 +5,7 @@ import com.aiforpet.tdogtdog.fcm.helper.TestAccountRepository;
 import com.aiforpet.tdogtdog.fcm.helper.TestFCMDeviceRepository;
 import com.aiforpet.tdogtdog.fcm.helper.TestNotificationRepository;
 import com.aiforpet.tdogtdog.module.account.Account;
-import com.aiforpet.tdogtdog.module.fcm.domain.DeviceType;
-import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
-import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSetting;
-import com.aiforpet.tdogtdog.module.fcm.domain.NotificationType;
+import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.service.FCMDeviceService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +49,7 @@ public class FCMDeviceServiceTest {
         @DisplayName("디바이스 생성 테스트")
         public void testCreateDevice(){
             accountHelper.createAccount(email);
-            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS);
+            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
 
             assertEquals(1, testAccountRepository.findAllByEmail(email).size());
         }
@@ -61,9 +58,9 @@ public class FCMDeviceServiceTest {
         @DisplayName("같은 디바이스 생성 될 경우 에러 발생")
         public void testCreateDuplicateDevice(){
             accountHelper.createAccount(email);
-            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS);
+            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
 
-            assertThrows(Exception.class, ()->fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS));
+            assertThrows(Exception.class, ()->fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME));
         }
     }
 
@@ -79,7 +76,7 @@ public class FCMDeviceServiceTest {
 
             accountHelper.createAccount(email);
             Account account = testAccountRepository.findByEmail(email);
-            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS);
+            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
             fcmDeviceService.updateToken(testFCMDeviceRepository.findByAccount(account).getDevice(), afterToken);
 
             assertEquals(afterToken, testFCMDeviceRepository.findByDevice(afterToken).getDevice());
@@ -90,8 +87,8 @@ public class FCMDeviceServiceTest {
         @DisplayName("이미 존재하는 디바이스로 업데이트 할 경우 에러 발생")
         public void testUpdateDuplicatedToken(){
             accountHelper.createAccount(email);
-            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS);
-            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), afterToken, DeviceType.IOS);
+            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
+            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), afterToken, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
 
             assertThrows(Exception.class, ()->fcmDeviceService.updateToken(testFCMDeviceRepository.findByDevice(initToken).getDevice(), afterToken));
         }
@@ -107,7 +104,7 @@ public class FCMDeviceServiceTest {
             accountHelper.createAccount(email);
             Account account = testAccountRepository.findByEmail(email);
 
-            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), token, DeviceType.IOS);
+            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), token, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
 
             FCMDevice fcmDevice = testFCMDeviceRepository.findByDevice(token);
             ReflectionTestUtils.setField(fcmDevice, "time", testTime);
