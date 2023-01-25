@@ -18,4 +18,6 @@ public interface FCMDeviceService {
     public Map<NotificationType, Boolean> updateAccountNotification(Account account, NotificationType notificationType, NotificationSetting notificationSetting);
 
     public String createDevice(Account account, String Device, DeviceType deviceType, RequestLocation requestLocation);
+
+    public RequestLocation updateRequestLocation(String device, RequestLocation requestLocation);
 }

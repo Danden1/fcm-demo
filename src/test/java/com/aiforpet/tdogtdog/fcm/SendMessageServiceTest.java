@@ -37,7 +37,7 @@ public class SendMessageServiceTest {
 
 
     @Autowired
-    public SendMessageServiceTest(SendMessageService sendMessageService, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, FCMDeviceHelper fcmDeviceHelper, AccountHelper accountHelper, TestNotificationRepository testNotificationRepository, TestAccountRepository testAccountRepository, ThreadPoolTaskExecutor executor) {
+    public SendMessageServiceTest(SendMessageService sendMessageService, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, FCMDeviceHelper fcmDeviceHelper, AccountHelper accountHelper, TestNotificationRepository testNotificationRepository, TestAccountRepository testAccountRepository) {
         this.sendMessageService = sendMessageService;
         this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;
         this.fcmDeviceHelper = fcmDeviceHelper;

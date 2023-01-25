@@ -130,6 +130,22 @@ public class FCMDeviceServiceTest {
         }
     }
 
+    @Nested
+    class UpdateRequestLocationTest{
+        @Test
+        @DisplayName("device request location 업데이트 테스트")
+        public void testUpdateRequestLocationNotification(){
+            accountHelper.createAccount(email);
+            Account account = testAccountRepository.findByEmail(email);
+
+            fcmDeviceService.createDevice(account,"123", DeviceType.IOS, RequestLocation.KOREA);
+            fcmDeviceService.updateRequestLocation("123", RequestLocation.US);
+
+            assertEquals(RequestLocation.US, testFCMDeviceRepository.findByDevice("123").getRequestLocation());
+        }
+    }
+
+
 
 
 }

@@ -53,4 +53,8 @@ public class FCMDevice {
         this.device = device;
         this.time = Instant.now();
     }
+
+    public void updateRequestLocation(RequestLocation requestLocation){
+        this.requestLocation = requestLocation;
+    }
 }

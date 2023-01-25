@@ -66,5 +66,16 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
         return fcmDevice.getDevice();
     }
 
+    @Override
+    @Transactional
+    public RequestLocation updateRequestLocation(String device, RequestLocation requestLocation){
+        FCMDevice fcmDevice = fcmDeviceRepository.findAllByDevice(device);
+        fcmDevice.updateRequestLocation(requestLocation);
+
+        fcmDeviceRepository.save(fcmDevice);
+
+        return fcmDevice.getRequestLocation();
+    }
+
 
 }
