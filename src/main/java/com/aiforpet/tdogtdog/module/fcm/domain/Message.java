@@ -7,11 +7,11 @@ import java.util.Map;
 
 @Getter
 public class Message {
-    private String title;
-    private String body;
-    private Map<String, Object> data;
-    private Receiver receiver;
-    private MessageConstraint messageConstraint;
+    private final String title;
+    private final String body;
+    private final Map<String, Object> data;
+    private final Receiver receiver;
+    private final MessageConstraint messageConstraint;
 
     public Message(String title, String body, Map<String, Object> data, Receiver receiver, MessageConstraint messageConstraint){
         this.title = title;

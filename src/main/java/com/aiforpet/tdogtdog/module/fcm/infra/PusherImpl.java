@@ -43,7 +43,7 @@ public class PusherImpl implements Pusher {
 
     @Scheduled(fixedDelay = 100)
     @Transactional
-    public void takeOfMessage(){
+    public void takeOutMessage(){
         List<MessageEntity> messageEntities = messageBoxRepository.findTop8ByOrderByIdAsc();
 
         Thread[] threads = new Thread[messageEntities.size()];

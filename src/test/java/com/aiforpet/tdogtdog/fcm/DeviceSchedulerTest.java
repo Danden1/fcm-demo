@@ -9,7 +9,6 @@ import com.aiforpet.tdogtdog.module.fcm.domain.DeviceScheduler;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceType;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,7 @@ public class DeviceSchedulerTest {
         ReflectionTestUtils.setField(fcmDevice, "time", oldTime);
         testFCMDeviceRepository.save(fcmDevice);
 
-        deviceScheduler.deleteOldDevice();
+        deviceScheduler.deleteOldDevices();
 
         assertEquals(2, testFCMDeviceRepository.findAll().size());
     }

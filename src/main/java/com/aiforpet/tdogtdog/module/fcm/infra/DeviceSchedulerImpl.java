@@ -22,7 +22,7 @@ public class DeviceSchedulerImpl implements DeviceScheduler {
     @Override
     @Scheduled(cron = "0 0 3 20 * ?")
     @Transactional
-    public void deleteOldDevice() {
+    public void deleteOldDevices() {
         fcmDeviceRepository.deleteByTimeLessThan(Instant.now().minus(60, ChronoUnit.DAYS));
     }
 }

@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 @Component
 public class HttpV1MessageMapper implements MessageMapper {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public PushMessageDto mapMessage(Message message) {
         HttpV1PushMessageDto httpV1PushMessageDto = new HttpV1PushMessageDto();

@@ -6,7 +6,7 @@ public enum MessageExceptionType {
     OVER_TIME_LIMIT("Over message's time limit. Delete message."),
     OFF_NOTIFICATION("Off notification. Can't send.");
 
-    private String message;
+    private final String message;
 
     MessageExceptionType(String message){
         this.message = message;

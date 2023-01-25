@@ -8,16 +8,13 @@ import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.infra.DBMessageBox;
 import com.aiforpet.tdogtdog.module.fcm.infra.PusherImpl;
-import org.hibernate.EmptyInterceptor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.List;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
@@ -97,7 +94,7 @@ public class PusherTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        pusher.takeOfMessage();
+        pusher.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -117,7 +114,7 @@ public class PusherTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(10, dbMessageBoxRepoHelper.findAll().size()));
 
-        pusher.takeOfMessage();
+        pusher.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(2, dbMessageBoxRepoHelper.findAll().size());
@@ -136,7 +133,7 @@ public class PusherTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        pusher.takeOfMessage();
+        pusher.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -157,7 +154,7 @@ public class PusherTest {
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
 
-        pusher.takeOfMessage();
+        pusher.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(5, dbMessageBoxRepoHelper.findAll().size());
@@ -179,7 +176,7 @@ public class PusherTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        pusher.takeOfMessage();
+        pusher.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
