@@ -14,5 +14,16 @@ public class Receiver {
         this.receiveDevice = receiveDevice;
         this.deviceType = deviceType;
         this.account = account;
+
+        if(!isValid()){
+            throw new RuntimeException("receiver error");
+        }
+    }
+
+    private boolean isValid(){
+        if(this.getReceiveDevice() == null || this.getDeviceType() == null || this.getAccount() == null){
+            return false;
+        }
+        return true;
     }
 }

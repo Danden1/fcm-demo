@@ -14,5 +14,15 @@ public class MessageConstraint {
         this.notificationType = notificationType;
         this.timeLimit = timeLimit;
         this.requestLocation = requestLocation;
+        if(!isValid()){
+            throw new RuntimeException("MessageConstraint error");
+        }
+    }
+
+    private boolean isValid(){
+        if(this.getRequestLocation() == null || this.getNotificationType() == null || this.getTimeLimit() == null){
+            return false;
+        }
+        return true;
     }
 }

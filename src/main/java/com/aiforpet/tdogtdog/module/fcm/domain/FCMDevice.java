@@ -4,7 +4,6 @@ package com.aiforpet.tdogtdog.module.fcm.domain;
 import com.aiforpet.tdogtdog.module.account.Account;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -38,12 +37,22 @@ public class FCMDevice {
     @Enumerated(EnumType.STRING)
     private RequestLocation requestLocation;
 
-    public FCMDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation){
+    @ManyToOne
+    @JoinColumn(name="notification_id", nullable = false)
+    private Notification notification;
+
+    public FCMDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation, Notification notification) throws Exception {
         this.account = account;
         this.device = device;
         this.deviceType = deviceType;
         this.time = Instant.now();
         this.requestLocation = requestLocation;
+        this.notification = notification;
+
+        if(!account.equals(notification.getAccount())){
+            throw new Exception("TODO");
+        }
+
     }
 
     public void updateTime(){
@@ -57,4 +66,6 @@ public class FCMDevice {
     public void updateRequestLocation(RequestLocation requestLocation){
         this.requestLocation = requestLocation;
     }
+
+
 }

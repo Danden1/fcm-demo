@@ -1,5 +1,5 @@
 package com.aiforpet.tdogtdog.module.fcm.domain;
 
-public interface DeviceScheduler {
+public interface OldDeviceErasure {
     public void deleteOldDevices();
 }

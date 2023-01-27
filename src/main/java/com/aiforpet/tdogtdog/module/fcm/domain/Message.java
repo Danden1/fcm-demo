@@ -3,6 +3,8 @@ package com.aiforpet.tdogtdog.module.fcm.domain;
 import com.aiforpet.tdogtdog.module.fcm.domain.exception.InvalidMessageException;
 import lombok.Getter;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 @Getter
@@ -24,6 +26,23 @@ public class Message {
         }
     }
 
+    public ZonedDateTime getTimeLimit(){
+        return messageConstraint.getTimeLimit();
+    }
+
+
+    public String getReceiveDevice(){
+        return receiver.getReceiveDevice();
+    }
+
+    public NotificationType getNotificationType(){
+        return messageConstraint.getNotificationType();
+    }
+
+    public RequestLocation getRequestLocation(){
+        return messageConstraint.getRequestLocation();
+    }
+
     private boolean isValidMessage(){
         if(this.title == null || this.body == null){
             return false;
@@ -31,16 +50,10 @@ public class Message {
         if(this.receiver == null){
             return false;
         }
-        if(this.receiver.getReceiveDevice() == null || this.receiver.getDeviceType() == null || this.receiver.getAccount() == null){
-            return false;
-        }
-        if(this.messageConstraint == null){
-            return false;
-        }
-        if(this.messageConstraint.getRequestLocation() == null || this.messageConstraint.getNotificationType() == null || this.getMessageConstraint().getTimeLimit() == null){
-            return false;
-        }
 
+        if(this.messageConstraint == null) {
+            return false;
+        }
         return true;
     }
 

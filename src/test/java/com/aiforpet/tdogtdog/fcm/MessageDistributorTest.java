@@ -1,13 +1,10 @@
 package com.aiforpet.tdogtdog.fcm;
 
-import com.aiforpet.tdogtdog.fcm.helper.AccountHelper;
-import com.aiforpet.tdogtdog.fcm.helper.DBMessageBoxRepoHelper;
-import com.aiforpet.tdogtdog.fcm.helper.MessageMaker;
-import com.aiforpet.tdogtdog.fcm.helper.TestAccountRepository;
+import com.aiforpet.tdogtdog.fcm.helper.*;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.infra.DBMessageBox;
-import com.aiforpet.tdogtdog.module.fcm.infra.PusherImpl;
+import com.aiforpet.tdogtdog.module.fcm.infra.MessageDistributorImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,13 +17,14 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class PusherTest {
+public class MessageDistributorTest {
 
-    private final Pusher pusher;
+    private final MessageDistributor messageDistributor;
     private final MessageMaker messageMaker;
     private final DBMessageBox dbMessageBox;
     private final DBMessageBoxRepoHelper dbMessageBoxRepoHelper;
     private final TestAccountRepository testAccountRepository;
+    private final TestFCMDeviceRepository testFCMDeviceRepository;
 
     private final static String email = "test";
     private final static String token = "123";
@@ -36,11 +34,12 @@ public class PusherTest {
 
 
     @Autowired
-    public PusherTest(PusherImpl pusher, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, TestAccountRepository testAccountRepository) {
-        this.pusher = pusher;
+    public MessageDistributorTest(MessageDistributorImpl distributor, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, TestAccountRepository testAccountRepository, TestFCMDeviceRepository testFCMDeviceRepository) {
+        this.messageDistributor = distributor;
         this.dbMessageBox = dbMessageBox;
         this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;
         this.testAccountRepository = testAccountRepository;
+        this.testFCMDeviceRepository = testFCMDeviceRepository;
         this.messageMaker = new MessageMaker();
     }
 
@@ -58,27 +57,14 @@ public class PusherTest {
 
 
     @BeforeAll
-    public static void createAccount(@Autowired AccountHelper accountHelper){
-        accountHelper.createAccount(email);
+    public static void createAccount(@Autowired AccountHelper accountHelper, @Autowired FCMDeviceHelper fcmDeviceHelper){
+        Account account = accountHelper.createAccount(email);
+        fcmDeviceHelper.createDevice(account, token, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
     }
 
     @AfterAll
     public static void deleteAccount(@Autowired AccountHelper accountHelper){
         accountHelper.deleteAccount();
-    }
-
-    @Test
-    @DisplayName("메시지 push 테스트(화면에 출력)")
-    public void testPushMessage(){
-        int repeat = 5;
-        Message message = messageMaker.makeValidTestMessage(token, getAccount());
-
-        for(int i = 0; i < repeat; i++){
-            pusher.push(message);
-        }
-
-        await().atMost(1, SECONDS)
-                .untilAsserted(() ->assertEquals(String.format("%s%n", messageMaker.getPushMessage(token)).repeat(5), outContent.toString()));
     }
 
 
@@ -94,7 +80,7 @@ public class PusherTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        pusher.takeOutMessage();
+        messageDistributor.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -114,7 +100,7 @@ public class PusherTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(10, dbMessageBoxRepoHelper.findAll().size()));
 
-        pusher.takeOutMessage();
+        messageDistributor.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(2, dbMessageBoxRepoHelper.findAll().size());
@@ -133,7 +119,7 @@ public class PusherTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        pusher.takeOutMessage();
+        messageDistributor.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -154,7 +140,7 @@ public class PusherTest {
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
 
-        pusher.takeOutMessage();
+        messageDistributor.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(5, dbMessageBoxRepoHelper.findAll().size());
@@ -176,7 +162,7 @@ public class PusherTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        pusher.takeOutMessage();
+        messageDistributor.takeOutMessage();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());

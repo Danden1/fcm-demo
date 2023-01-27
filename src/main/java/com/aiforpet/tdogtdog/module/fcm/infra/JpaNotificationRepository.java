@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface JpaNotificationRepository extends JpaRepository<Notification, Long> {
     public Notification findByAccount(Account account);
+    public Notification findNotificationById(long id);
 
     @Query(value = "select distinct nt.account_id from Notification nt where nt.important=true", nativeQuery = true)
     public List<Long> findDistinctAccountByImportant();

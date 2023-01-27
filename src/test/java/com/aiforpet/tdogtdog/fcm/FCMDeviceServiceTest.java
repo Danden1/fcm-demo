@@ -49,7 +49,7 @@ public class FCMDeviceServiceTest {
         @DisplayName("디바이스 생성 테스트")
         public void testCreateDevice(){
             accountHelper.createAccount(email);
-            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
+            fcmDeviceService.createDevice(testAccountRepository.findByEmail(email), initToken, DeviceType.IOS, RequestLocation.KOREA);
 
             assertEquals(1, testAccountRepository.findAllByEmail(email).size());
         }

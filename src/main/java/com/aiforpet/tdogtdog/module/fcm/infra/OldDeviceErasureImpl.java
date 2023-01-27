@@ -1,6 +1,6 @@
 package com.aiforpet.tdogtdog.module.fcm.infra;
 
-import com.aiforpet.tdogtdog.module.fcm.domain.DeviceScheduler;
+import com.aiforpet.tdogtdog.module.fcm.domain.OldDeviceErasure;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDeviceRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,11 +11,11 @@ import java.time.temporal.ChronoUnit;
 
 
 @Component
-public class DeviceSchedulerImpl implements DeviceScheduler {
+public class OldDeviceErasureImpl implements OldDeviceErasure {
 
     private final FCMDeviceRepository fcmDeviceRepository;
 
-    public DeviceSchedulerImpl(FCMDeviceRepository fcmDeviceRepository) {
+    public OldDeviceErasureImpl(FCMDeviceRepository fcmDeviceRepository) {
         this.fcmDeviceRepository = fcmDeviceRepository;
     }
 

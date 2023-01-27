@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Account {
+public class Account{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -21,4 +21,11 @@ public class Account {
     private String email;
 
 
+    @Override
+    public boolean equals(Object target){
+        if(!(target instanceof Account)){
+            return false;
+        }
+        return ((Account) target).getId() == this.id;
+    }
 }

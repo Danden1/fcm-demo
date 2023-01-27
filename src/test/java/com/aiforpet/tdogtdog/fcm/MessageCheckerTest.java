@@ -1,45 +1,44 @@
 package com.aiforpet.tdogtdog.fcm;
 
 import com.aiforpet.tdogtdog.fcm.helper.AccountHelper;
+import com.aiforpet.tdogtdog.fcm.helper.FCMDeviceHelper;
 import com.aiforpet.tdogtdog.fcm.helper.TestAccountRepository;
 import com.aiforpet.tdogtdog.fcm.helper.TestNotificationRepository;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
-import com.aiforpet.tdogtdog.module.fcm.domain.exception.NotificationException;
-import com.aiforpet.tdogtdog.module.fcm.domain.exception.PushTimeException;
-import com.aiforpet.tdogtdog.module.fcm.domain.exception.TimeLimitException;
-import com.aiforpet.tdogtdog.module.fcm.domain.validator.MessageNotificationValidator;
-import com.aiforpet.tdogtdog.module.fcm.domain.validator.MessagePushTimeValidator;
-import com.aiforpet.tdogtdog.module.fcm.domain.validator.MessageTimeLimitValidator;
-import com.aiforpet.tdogtdog.module.fcm.domain.validator.MessageValidator;
+import com.aiforpet.tdogtdog.module.fcm.domain.checker.NotificationChecker;
+import com.aiforpet.tdogtdog.module.fcm.domain.checker.SendingTimeChecker;
+import com.aiforpet.tdogtdog.module.fcm.domain.checker.TimeLimitChecker;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class MessageValidatorTest {
+public class MessageCheckerTest {
 
     private final TestAccountRepository testAccountRepository;
     private final NotificationRepository notificationRepository;
+    private final FCMDeviceRepository fcmDeviceRepository;
     private final static String email = "test";
 
     @Autowired
-    public MessageValidatorTest(TestAccountRepository testAccountRepository, NotificationRepository notificationRepository) {
+    public MessageCheckerTest(TestAccountRepository testAccountRepository, NotificationRepository notificationRepository, FCMDeviceRepository fcmDeviceRepository) {
         this.testAccountRepository = testAccountRepository;
         this.notificationRepository = notificationRepository;
+        this.fcmDeviceRepository = fcmDeviceRepository;
     }
 
 
     @BeforeAll
-    public static void createAccount(@Autowired AccountHelper accountHelper){
-        accountHelper.createAccount(email);
+    public static void createAccount(@Autowired AccountHelper accountHelper, @Autowired FCMDeviceHelper fcmDeviceHelper){
+        Account account = accountHelper.createAccount(email);
+        fcmDeviceHelper.createDevice(account, "123", DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
     }
 
     @AfterAll
@@ -53,7 +52,7 @@ public class MessageValidatorTest {
         @Test
         @DisplayName("제한 시간 넘어갔을 경우 테스트")
         public void testOverTimeLimit(){
-            MessageValidator validator = new MessageTimeLimitValidator();
+            TimeLimitChecker timeLimitChecker = new TimeLimitChecker();
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().minus(30, ChronoUnit.MINUTES), RequestLocation.TEST_BETWEEN_TIME);
@@ -62,15 +61,13 @@ public class MessageValidatorTest {
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
 
-            assertThrows(TimeLimitException.class, () -> validator.assertValidMessage(message));
-
-
+            assertTrue(timeLimitChecker.isDestroy(message));
         }
 
         @Test
         @DisplayName("제한 시간 넘지 않았을 경우 테스트")
         public void testBeforeTimeLimit(){
-            MessageValidator validator = new MessageTimeLimitValidator();
+            TimeLimitChecker timeLimitChecker = new TimeLimitChecker();
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().plus(30, ChronoUnit.MINUTES), RequestLocation.TEST_BETWEEN_TIME);
@@ -78,17 +75,17 @@ public class MessageValidatorTest {
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
-            validator.assertValidMessage(message);
+            assertFalse(timeLimitChecker.isDestroy(message));
 
         }
     }
 
     @Nested
-    class PushTimeTest{
+    class SendingTimeTest{
         @Test
         @DisplayName("푸시 보내는 시간 안에 있을 경우 테스트")
         public void testBetweenSendingTime(){
-            MessageValidator validator = new MessagePushTimeValidator();
+            SendingTimeChecker sendingTimeChecker = new SendingTimeChecker();
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now(), RequestLocation.TEST_BETWEEN_TIME);
@@ -97,13 +94,13 @@ public class MessageValidatorTest {
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
 
-            validator.assertValidMessage(message);
+            assertFalse(sendingTimeChecker.isResend(message));
         }
 
         @Test
         @DisplayName("푸시 보내는 시간을 벗어났을 경우 테스트")
         public void testAfterSendingTime(){
-            MessageValidator validator = new MessagePushTimeValidator();
+            SendingTimeChecker sendingTimeChecker = new SendingTimeChecker();
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now(), RequestLocation.TEST_OVER_TIME);
@@ -112,7 +109,7 @@ public class MessageValidatorTest {
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
 
-            assertThrows(PushTimeException.class, () -> validator.assertValidMessage(message));
+            assertTrue(sendingTimeChecker.isResend(message));
         }
     }
 
@@ -121,7 +118,7 @@ public class MessageValidatorTest {
         @Test
         @DisplayName("TEST 알림을 받는 계정에 TEST 알림이 왔을 경우 테스트")
         public void testOnNotification(){
-            MessageValidator validator = new MessageNotificationValidator(notificationRepository);
+            NotificationChecker notificationChecker = new NotificationChecker(fcmDeviceRepository);
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now(), RequestLocation.TEST_BETWEEN_TIME);
@@ -129,20 +126,20 @@ public class MessageValidatorTest {
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
-            validator.assertValidMessage(message);
+            assertFalse(notificationChecker.isDestroy(message));
         }
 
         @Test
         @DisplayName("TEST 알림을 받지 않는 계정에 TEST 알림이 왔을 경우 테스트")
         public void testOffNotification(){
-            MessageValidator validator = new MessageNotificationValidator(notificationRepository);
+            NotificationChecker notificationChecker = new NotificationChecker(fcmDeviceRepository);
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.EVENT, ZonedDateTime.now(), RequestLocation.TEST_BETWEEN_TIME);
             Receiver receiver = new Receiver("123", DeviceType.IOS, account);
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
-            assertThrows(NotificationException.class, () -> validator.assertValidMessage(message));
+            assertTrue(notificationChecker.isDestroy(message));
         }
     }
 }

@@ -5,8 +5,6 @@ import com.aiforpet.tdogtdog.module.fcm.domain.*;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MessageMaker {
 

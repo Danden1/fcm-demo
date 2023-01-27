@@ -5,7 +5,7 @@ import com.aiforpet.tdogtdog.fcm.helper.FCMDeviceHelper;
 import com.aiforpet.tdogtdog.fcm.helper.TestAccountRepository;
 import com.aiforpet.tdogtdog.fcm.helper.TestFCMDeviceRepository;
 import com.aiforpet.tdogtdog.module.account.Account;
-import com.aiforpet.tdogtdog.module.fcm.domain.DeviceScheduler;
+import com.aiforpet.tdogtdog.module.fcm.domain.OldDeviceErasure;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceType;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
 import com.aiforpet.tdogtdog.module.fcm.domain.RequestLocation;
@@ -24,18 +24,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
-public class DeviceSchedulerTest {
+public class OldDeviceErasureTest {
 
     private final TestAccountRepository testAccountRepository;
     private final TestFCMDeviceRepository testFCMDeviceRepository;
     private final AccountHelper accountHelper;
     private final FCMDeviceHelper fcmDeviceHelper;
-    private final DeviceScheduler deviceScheduler;
+    private final OldDeviceErasure deviceScheduler;
 
     private final String email = "test";
 
     @Autowired
-    public DeviceSchedulerTest(TestAccountRepository testAccountRepository, TestFCMDeviceRepository testFCMDeviceRepository, AccountHelper accountHelper, FCMDeviceHelper fcmDeviceHelper, DeviceScheduler deviceScheduler) {
+    public OldDeviceErasureTest(TestAccountRepository testAccountRepository, TestFCMDeviceRepository testFCMDeviceRepository, AccountHelper accountHelper, FCMDeviceHelper fcmDeviceHelper, OldDeviceErasure deviceScheduler) {
         this.testAccountRepository = testAccountRepository;
         this.testFCMDeviceRepository = testFCMDeviceRepository;
         this.accountHelper = accountHelper;

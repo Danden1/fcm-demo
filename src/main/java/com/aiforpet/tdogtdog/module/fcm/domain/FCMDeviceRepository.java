@@ -12,4 +12,5 @@ public interface FCMDeviceRepository {
     public List<FCMDevice> findAllByAccount(Account account);
     public void deleteByTimeLessThan(Instant time);
     public void save(FCMDevice fcmDevice);
+    public Notification findNotificationByDevice(String device);
 }

@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 
 public interface SendMessageService {
-    public void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit);
-    public void sendToDevice(Account account, NotificationType notificationType,  String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit);
+    void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit);
+    void sendToDevice(Account account, NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit);
 
 }

@@ -7,7 +7,6 @@ import com.aiforpet.tdogtdog.module.fcm.service.SendMessageService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
