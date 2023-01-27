@@ -2,7 +2,7 @@ package com.aiforpet.tdogtdog.module.fcm.domain.checker;
 
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDeviceRepository;
 import com.aiforpet.tdogtdog.module.fcm.domain.Message;
-import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
+import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSettings;
 import com.aiforpet.tdogtdog.module.fcm.domain.NotificationType;
 
 public class NotificationChecker implements DestroyChecker {
@@ -16,7 +16,7 @@ public class NotificationChecker implements DestroyChecker {
     @Override
     public boolean isDestroy(Message message) {
 
-        Notification deviceNotification = fcmDeviceRepository.findNotificationByDevice(message.getReceiveDevice());
+        NotificationSettings deviceNotification = fcmDeviceRepository.findNotificationByDevice(message.getReceiveDevice());
         NotificationType messageNotificationType = message.getNotificationType();
 
         return !deviceNotification.isNotification(messageNotificationType);

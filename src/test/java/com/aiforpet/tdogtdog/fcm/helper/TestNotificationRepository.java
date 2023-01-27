@@ -1,10 +1,10 @@
 package com.aiforpet.tdogtdog.fcm.helper;
 
 import com.aiforpet.tdogtdog.module.account.Account;
-import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
+import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSettings;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TestNotificationRepository extends JpaRepository<Notification, Long> {
+public interface TestNotificationRepository extends JpaRepository<NotificationSettings, Long> {
     public void deleteAllInBatch();
-    public Notification findByAccount(Account account);
+    public NotificationSettings findByAccount(Account account);
 }

@@ -2,7 +2,6 @@ package com.aiforpet.tdogtdog.module.fcm.infra;
 
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
-import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
 import com.aiforpet.tdogtdog.module.fcm.domain.RequestLocation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

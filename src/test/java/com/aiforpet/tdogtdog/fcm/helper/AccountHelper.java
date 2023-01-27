@@ -1,9 +1,9 @@
 package com.aiforpet.tdogtdog.fcm.helper;
 
 import com.aiforpet.tdogtdog.module.account.Account;
-import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
+import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSettings;
 import com.aiforpet.tdogtdog.module.fcm.domain.NotificationRepository;
-import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSetting;
+import com.aiforpet.tdogtdog.module.fcm.domain.NotificationControl;
 import com.aiforpet.tdogtdog.module.fcm.domain.NotificationType;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +29,9 @@ public class AccountHelper {
         account.setEmail(email);
 
 
-        Notification notification = new Notification(account);
-        notification.updateNotification(NotificationType.TEST, NotificationSetting.ON);
-        notification.updateNotification(NotificationType.EVENT, NotificationSetting.OFF);
+        NotificationSettings notification = new NotificationSettings(account);
+        notification.updateNotification(NotificationType.TEST, NotificationControl.ON);
+        notification.updateNotification(NotificationType.EVENT, NotificationControl.OFF);
 
         testAccountRepository.save(account);
         notificationRepository.save(notification);

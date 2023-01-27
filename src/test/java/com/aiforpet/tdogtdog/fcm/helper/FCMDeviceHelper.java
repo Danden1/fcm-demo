@@ -3,7 +3,7 @@ package com.aiforpet.tdogtdog.fcm.helper;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.DeviceType;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
-import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
+import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSettings;
 import com.aiforpet.tdogtdog.module.fcm.domain.RequestLocation;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ public class FCMDeviceHelper {
 
     @Transactional
     public String createDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation) {
-        Notification notification = testNotificationRepository.findByAccount(account);
+        NotificationSettings notification = testNotificationRepository.findByAccount(account);
         FCMDevice fcmDevice = null;
         try {
             fcmDevice = new FCMDevice(account, device, deviceType, requestLocation, notification);

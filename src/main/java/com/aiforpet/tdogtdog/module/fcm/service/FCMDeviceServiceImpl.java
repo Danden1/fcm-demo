@@ -2,7 +2,6 @@ package com.aiforpet.tdogtdog.module.fcm.service;
 
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
-import com.aiforpet.tdogtdog.module.fcm.infra.JpaAccountRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -43,8 +42,8 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
 
     @Override
     @Transactional
-    public Map<NotificationType, Boolean> updateAccountNotification(Account account, NotificationType notificationType, NotificationSetting notificationSetting) {
-        Notification notification = notificationRepository.findByAccount(account);
+    public Map<NotificationType, Boolean> updateAccountNotification(Account account, NotificationType notificationType, NotificationControl notificationSetting) {
+        NotificationSettings notification = notificationRepository.findByAccount(account);
 
         notification.updateNotification(notificationType, notificationSetting);
 
@@ -60,7 +59,7 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     @Override
     @Transactional
     public String createDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation) {
-        Notification notification = notificationRepository.findByAccount(account);
+        NotificationSettings notification = notificationRepository.findByAccount(account);
         FCMDevice fcmDevice = null;
         try {
             fcmDevice = new FCMDevice(account, device, deviceType, requestLocation, notification);

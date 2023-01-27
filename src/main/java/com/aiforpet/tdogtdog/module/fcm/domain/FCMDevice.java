@@ -39,9 +39,9 @@ public class FCMDevice {
 
     @ManyToOne
     @JoinColumn(name="notification_id", nullable = false)
-    private Notification notification;
+    private NotificationSettings notification;
 
-    public FCMDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation, Notification notification) throws Exception {
+    public FCMDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation, NotificationSettings notification) throws Exception {
         this.account = account;
         this.device = device;
         this.deviceType = deviceType;

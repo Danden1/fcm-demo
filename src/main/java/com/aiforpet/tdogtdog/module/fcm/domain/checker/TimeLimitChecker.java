@@ -10,7 +10,6 @@ public class TimeLimitChecker implements DestroyChecker {
     public boolean isDestroy(Message message) {
         ZonedDateTime timeLimit = message.getTimeLimit();
         ZoneId requestZone = timeLimit.getZone();
-        //data?
 
         ZonedDateTime nowTime = ZonedDateTime.now(requestZone);
 

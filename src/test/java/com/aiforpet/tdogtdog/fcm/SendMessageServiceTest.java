@@ -92,8 +92,8 @@ public class SendMessageServiceTest {
         @Test
         @DisplayName("TEST 알림이 켜져있는 계정의 메시지만 박스에 들어가는 지 테스트")
         void testSendToTestOffDevices(){
-            Notification otherNotification = testNotificationRepository.findByAccount(testAccountRepository.findByEmail(otherEmail));
-            otherNotification.updateNotification(NotificationType.TEST, NotificationSetting.OFF);
+            NotificationSettings otherNotification = testNotificationRepository.findByAccount(testAccountRepository.findByEmail(otherEmail));
+            otherNotification.updateNotification(NotificationType.TEST, NotificationControl.OFF);
             testNotificationRepository.save(otherNotification);
 
             sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, ZonedDateTime.now().plus(5, ChronoUnit.MINUTES));
@@ -135,8 +135,8 @@ public class SendMessageServiceTest {
         @Test
         @DisplayName("특정 계정의 TEST 알림이 꺼져있을 경우, 메시지가 박스에 안 들어가는 지 테스트 ")
         void testSendToTestOffDevice(){
-            Notification otherNotification = testNotificationRepository.findByAccount(testAccountRepository.findByEmail(otherEmail));
-            otherNotification.updateNotification(NotificationType.TEST, NotificationSetting.OFF);
+            NotificationSettings otherNotification = testNotificationRepository.findByAccount(testAccountRepository.findByEmail(otherEmail));
+            otherNotification.updateNotification(NotificationType.TEST, NotificationControl.OFF);
             testNotificationRepository.save(otherNotification);
 
             Account account = testAccountRepository.findByEmail(otherEmail);

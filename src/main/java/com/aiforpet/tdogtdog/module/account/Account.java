@@ -1,7 +1,6 @@
 package com.aiforpet.tdogtdog.module.account;
 
 
-import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

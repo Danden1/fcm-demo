@@ -3,7 +3,7 @@ package com.aiforpet.tdogtdog.module.fcm.infra;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDevice;
 import com.aiforpet.tdogtdog.module.fcm.domain.FCMDeviceRepository;
-import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
+import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSettings;
 import com.aiforpet.tdogtdog.module.fcm.domain.RequestLocation;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +49,7 @@ public class FCMDeviceRepositoryImpl implements FCMDeviceRepository {
     }
 
     @Override
-    public Notification findNotificationByDevice(String device) {
+    public NotificationSettings findNotificationByDevice(String device) {
         Long notificationId = jpaFCMDeviceRepository.findNotificationIdByDevice(device);
 
         return jpaNotificationRepository.findNotificationById(notificationId);

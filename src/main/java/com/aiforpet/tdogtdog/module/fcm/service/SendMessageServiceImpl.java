@@ -31,14 +31,8 @@ public class SendMessageServiceImpl implements SendMessageService {
     @Transactional
     @Async
     public void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit) {
-        List<Account> accounts = null;
+        List<Account> accounts = notificationRepository.findAccountIdByAvailableNotificationContains(notificationType);
 
-        if(notificationType == NotificationType.IMPORTANT)
-            accounts = notificationRepository.findAccountByImportant();
-        if(notificationType == NotificationType.TEST)
-            accounts = notificationRepository.findAccountByTest();
-        if(notificationType == NotificationType.EVENT)
-            accounts = notificationRepository.findAccountByEvent();
 
         List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByRequestLocationAndAccountIn(requestLocation, accounts);
 
@@ -55,14 +49,9 @@ public class SendMessageServiceImpl implements SendMessageService {
     @Transactional
     @Async
     public void sendToDevice(Account account, NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit) {
-        Notification notification = notificationRepository.findByAccount(account);
+        NotificationSettings notification = notificationRepository.findByAccount(account);
 
-        if(notificationType == NotificationType.IMPORTANT && !notification.getImportant())
-            return;
-        if(notificationType == NotificationType.TEST && !notification.getTest())
-            return;
-        if(notificationType == NotificationType.EVENT && !notification.getEvent())
-            return;
+        if(!notification.isNotification(notificationType)) return;
 
         List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByAccount(account);
 

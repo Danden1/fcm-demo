@@ -1,8 +1,9 @@
 package com.aiforpet.tdogtdog.module.fcm.infra;
 
 import com.aiforpet.tdogtdog.module.account.Account;
-import com.aiforpet.tdogtdog.module.fcm.domain.Notification;
+import com.aiforpet.tdogtdog.module.fcm.domain.NotificationSettings;
 import com.aiforpet.tdogtdog.module.fcm.domain.NotificationRepository;
+import com.aiforpet.tdogtdog.module.fcm.domain.NotificationType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,38 +21,21 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     }
 
     @Override
-    public Notification findByAccount(Account account) {
+    public NotificationSettings findByAccount(Account account) {
         return jpaNotificationRepository.findByAccount(account);
     }
 
     @Override
-    public void save(Notification notification) {
+    public void save(NotificationSettings notification) {
+
         jpaNotificationRepository.save(notification);
     }
 
     @Override
-    public List<Account> findAccountByImportant(){
-        List<Long> accountIds = jpaNotificationRepository.findDistinctAccountByImportant();
-
-
-        return accountIds.stream().map(jpaAccountRepository::findAccountById).collect(Collectors.toList());
+    public List<Account> findAccountIdByAvailableNotificationContains(NotificationType notificationType) {
+        List<NotificationSettings> notifications = jpaNotificationRepository.findAllByAvailableNotificationContains(notificationType);
+        return notifications.stream().map(NotificationSettings::getAccount).collect(Collectors.toList());
     }
-
-    @Override
-    public List<Account> findAccountByEvent(){
-        List<Long> accountIds = jpaNotificationRepository.findDistinctAccountByEvent();
-
-        return accountIds.stream().map(jpaAccountRepository::findAccountById).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Account> findAccountByTest(){
-        List<Long> accountIds = jpaNotificationRepository.findDistinctAccountByTest();
-
-        return accountIds.stream().map(jpaAccountRepository::findAccountById).collect(Collectors.toList());
-    }
-
-
 
 
 }
