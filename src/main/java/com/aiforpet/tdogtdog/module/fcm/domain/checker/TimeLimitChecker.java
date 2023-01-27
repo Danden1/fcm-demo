@@ -13,7 +13,6 @@ public class TimeLimitChecker implements DestroyChecker {
 
         ZonedDateTime nowTime = ZonedDateTime.now(requestZone);
 
-
         return nowTime.isAfter(timeLimit);
     }
 }

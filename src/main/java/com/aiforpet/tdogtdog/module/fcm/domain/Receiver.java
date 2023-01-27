@@ -16,7 +16,7 @@ public class Receiver {
         this.account = account;
 
         if(!isValid()){
-            throw new RuntimeException("receiver error");
+            throw new NullPointerException("receiver not allow null.");
         }
     }
 

@@ -15,7 +15,7 @@ public class MessageConstraint {
         this.timeLimit = timeLimit;
         this.requestLocation = requestLocation;
         if(!isValid()){
-            throw new RuntimeException("MessageConstraint error");
+            throw new NullPointerException("MessageConstraint not allow null");
         }
     }
 

@@ -11,13 +11,13 @@ import java.util.Map;
 
 public interface FCMDeviceService {
 
-    public String updateToken(String beforeDevice, String afterDevice);
+    String updateToken(String beforeDevice, String afterDevice);
 
-    public Instant updateTime(String device);
+    Instant updateTime(String device);
 
-    public Map<NotificationType, Boolean> updateAccountNotification(Account account, NotificationType notificationType, NotificationControl notificationSetting);
+    Map<NotificationType, NotificationControl> updateAccountNotification(Account account, NotificationType notificationType, NotificationControl notificationSetting);
 
-    public String createDevice(Account account, String Device, DeviceType deviceType, RequestLocation requestLocation);
+    String createDevice(Account account, String Device, DeviceType deviceType, RequestLocation requestLocation);
 
-    public RequestLocation updateRequestLocation(String device, RequestLocation requestLocation);
+    RequestLocation updateRequestLocation(String device, RequestLocation requestLocation);
 }
