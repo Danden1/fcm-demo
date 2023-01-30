@@ -19,21 +19,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class MessageBoxTest {
 
-    private final MessageBoxRepository messageBoxRepository;
     private final MessageBox messageBox;
     private final DBMessageBoxRepoHelper dbMessageBoxRepoHelper;
-    private final TestAccountRepository testAccountRepository;
 
     private final MessageMaker messageMaker;
     private static final String email = "test";
 
 
     @Autowired
-    public MessageBoxTest(MessageBoxRepository messageBoxRepository, MessageBox messageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, TestAccountRepository testAccountRepository) {
-        this.messageBoxRepository = messageBoxRepository;
+    public MessageBoxTest(MessageBox messageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper) {
         this.messageBox = messageBox;
         this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;
-        this.testAccountRepository = testAccountRepository;
 
         this.messageMaker = new MessageMaker();
     }

@@ -8,9 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface JpaNotificationSettingsRepository extends JpaRepository<NotificationSettings, Long> {
-    public NotificationSettings findByAccount(Account account);
-    public NotificationSettings findNotificationById(long id);
-
-//    @Query(value = "select  distinct nt.account_id from Notification nt where ?1 member of nt.availableNotification", nativeQuery = true)
-    List<NotificationSettings> findAllByAvailableNotificationContains(NotificationType notificationType);
+    NotificationSettings findByAccount(Account account);
+    NotificationSettings findNotificationById(long id);
 }

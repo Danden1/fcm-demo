@@ -39,17 +39,17 @@ public class FCMDevice {
 
     @ManyToOne
     @JoinColumn(name="notification_id", nullable = false)
-    private NotificationSettings notification;
+    private NotificationSettings notificationSettings;
 
-    public FCMDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation, NotificationSettings notification) throws Exception {
+    public FCMDevice(Account account, String device, DeviceType deviceType, RequestLocation requestLocation, NotificationSettings notificationSettings) throws Exception {
         this.account = account;
         this.device = device;
         this.deviceType = deviceType;
         this.time = Instant.now();
         this.requestLocation = requestLocation;
-        this.notification = notification;
+        this.notificationSettings = notificationSettings;
 
-        if(!account.equals(notification.getAccount())){
+        if(!account.equals(notificationSettings.getAccount())){
             throw new Exception("TODO");
         }
 

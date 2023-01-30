@@ -25,7 +25,7 @@ public class HttpV1MessageMapper implements MessageMapper {
         httpV1MessageDto.setNotification(notificationDto);
 
         httpV1MessageDto.setData(message.getData());
-        httpV1MessageDto.setToken(message.getReceiver().getReceiveDevice());
+        httpV1MessageDto.setToken(message.getReceiveDevice());
 
 
         httpV1PushMessageDto.setMessage(httpV1MessageDto);

@@ -78,7 +78,7 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessage();
+        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -98,7 +98,7 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(10, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessage();
+        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(2, dbMessageBoxRepoHelper.findAll().size());
@@ -117,7 +117,7 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessage();
+        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -138,7 +138,7 @@ public class MessageDistributorTest {
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
 
-        messageDistributor.takeOutMessage();
+        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(5, dbMessageBoxRepoHelper.findAll().size());
@@ -160,7 +160,7 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessage();
+        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());

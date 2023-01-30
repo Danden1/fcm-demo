@@ -23,7 +23,7 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     @Override
     @Transactional
     public String updateToken(String beforeDevice, String afterDevice) {
-        FCMDevice fcmDevice = fcmDeviceRepository.findAllByDevice(beforeDevice);
+        FCMDevice fcmDevice = fcmDeviceRepository.findByDevice(beforeDevice);
 
         fcmDevice.updateDevice(afterDevice);
         fcmDeviceRepository.save(fcmDevice);
@@ -34,7 +34,7 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     @Override
     @Transactional
     public Instant updateTime(String device) {
-        FCMDevice fcmDevice = fcmDeviceRepository.findAllByDevice(device);
+        FCMDevice fcmDevice = fcmDeviceRepository.findByDevice(device);
         fcmDevice.updateTime();
 
         return fcmDevice.getTime();
@@ -75,7 +75,7 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
     @Override
     @Transactional
     public RequestLocation updateRequestLocation(String device, RequestLocation requestLocation){
-        FCMDevice fcmDevice = fcmDeviceRepository.findAllByDevice(device);
+        FCMDevice fcmDevice = fcmDeviceRepository.findByDevice(device);
         fcmDevice.updateRequestLocation(requestLocation);
 
         fcmDeviceRepository.save(fcmDevice);

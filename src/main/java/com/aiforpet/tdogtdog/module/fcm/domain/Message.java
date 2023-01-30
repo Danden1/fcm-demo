@@ -7,7 +7,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-@Getter
 public class Message {
     private final String title;
     private final String body;
@@ -15,13 +14,13 @@ public class Message {
     private final Receiver receiver;
     private final MessageConstraint messageConstraint;
 
-    public Message(String title, String body, Map<String, Object> data, Receiver receiver, MessageConstraint messageConstraint){
+    public Message(String title, String body, Map<String, Object> data, Receiver receiver, MessageConstraint messageConstraint) throws InvalidMessageException{
         this.title = title;
         this.body = body;
         this.data = data;
         this.receiver = receiver;
         this.messageConstraint = messageConstraint;
-        if (!isValidMessage()){
+        if (!isValid()){
             throw new InvalidMessageException();
         }
     }
@@ -34,6 +33,19 @@ public class Message {
     public String getReceiveDevice(){
         return receiver.getReceiveDevice();
     }
+    public DeviceType getDeviceType(){
+        return receiver.getDeviceType();
+    }
+
+    public String getTitle(){
+        return title;
+    }
+    public String getBody(){
+        return body;
+    }
+    public Map<String, Object> getData(){
+        return data;
+    }
 
     public NotificationType getNotificationType(){
         return messageConstraint.getNotificationType();
@@ -43,7 +55,7 @@ public class Message {
         return messageConstraint.getRequestLocation();
     }
 
-    private boolean isValidMessage(){
+    private boolean isValid(){
         if(this.title == null || this.body == null){
             return false;
         }

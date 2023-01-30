@@ -29,12 +29,12 @@ public class MessageEntityMapper {
         messageEntity.setTitle(message.getTitle());
         messageEntity.setData(stringData);
 
-        messageEntity.setTimeLimit(message.getMessageConstraint().getTimeLimit());
-        messageEntity.setNotificationType(message.getMessageConstraint().getNotificationType());
-        messageEntity.setRequestLocation(message.getMessageConstraint().getRequestLocation());
+        messageEntity.setTimeLimit(message.getTimeLimit());
+        messageEntity.setNotificationType(message.getNotificationType());
+        messageEntity.setRequestLocation(message.getRequestLocation());
 
-        messageEntity.setReceiveDevice(message.getReceiver().getReceiveDevice());
-        messageEntity.setDeviceType(message.getReceiver().getDeviceType());
+        messageEntity.setReceiveDevice(message.getReceiveDevice());
+        messageEntity.setDeviceType(message.getDeviceType());
 
         return messageEntity;
     }

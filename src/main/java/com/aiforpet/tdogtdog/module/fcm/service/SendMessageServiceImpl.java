@@ -29,12 +29,8 @@ public class SendMessageServiceImpl implements SendMessageService {
 
     @Override
     @Transactional
-    @Async
     public void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit) {
-        List<Account> accounts = notificationRepository.findAccountByAvailableNotificationContains(notificationType);
-
-
-        List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByRequestLocationAndAccountIn(requestLocation, accounts);
+        List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByRequestLocationAndNotificationSettings_AvailableNotificationContains(requestLocation, notificationType);
 
         for(FCMDevice fcmDevice : fcmDevices){
             Receiver receiver = new Receiver(fcmDevice.getDevice(), fcmDevice.getDeviceType());
@@ -47,7 +43,6 @@ public class SendMessageServiceImpl implements SendMessageService {
 
     @Override
     @Transactional
-    @Async
     public void sendToDevice(Account account, NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit) {
         NotificationSettings notification = notificationRepository.findByAccount(account);
 

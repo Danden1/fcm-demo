@@ -13,11 +13,9 @@ import java.util.stream.Collectors;
 public class NotificationSettingsRepositoryImpl implements NotificationSettingsRepository {
 
     private final JpaNotificationSettingsRepository jpaNotificationRepository;
-    private final JpaAccountRepository jpaAccountRepository;
 
-    public NotificationSettingsRepositoryImpl(JpaNotificationSettingsRepository jpaNotificationRepository, JpaAccountRepository jpaAccountRepository) {
+    public NotificationSettingsRepositoryImpl(JpaNotificationSettingsRepository jpaNotificationRepository) {
         this.jpaNotificationRepository = jpaNotificationRepository;
-        this.jpaAccountRepository = jpaAccountRepository;
     }
 
     @Override
@@ -29,12 +27,6 @@ public class NotificationSettingsRepositoryImpl implements NotificationSettingsR
     public void save(NotificationSettings notification) {
 
         jpaNotificationRepository.save(notification);
-    }
-
-    @Override
-    public List<Account> findAccountByAvailableNotificationContains(NotificationType notificationType) {
-        List<NotificationSettings> notifications = jpaNotificationRepository.findAllByAvailableNotificationContains(notificationType);
-        return notifications.stream().map(NotificationSettings::getAccount).collect(Collectors.toList());
     }
 
 

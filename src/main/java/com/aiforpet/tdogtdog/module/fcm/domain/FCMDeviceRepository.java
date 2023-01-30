@@ -6,11 +6,14 @@ import java.time.Instant;
 import java.util.List;
 
 public interface FCMDeviceRepository {
-    FCMDevice findAllByDevice(String device);
+    FCMDevice findByDevice(String device);
     void deleteByDevice(String device);
-    List<FCMDevice> findAllByRequestLocationAndAccountIn(RequestLocation requestLocation, List<Account> accounts);
+
     List<FCMDevice> findAllByAccount(Account account);
+
+    List<FCMDevice> findAllByRequestLocationAndNotificationSettings_AvailableNotificationContains(RequestLocation requestLocation, NotificationType notificationType);
+
     void deleteByTimeLessThan(Instant time);
     void save(FCMDevice fcmDevice);
-    NotificationSettings findNotificationByDevice(String device);
+    NotificationSettings findNotificationSettingsByDevice(String device);
 }

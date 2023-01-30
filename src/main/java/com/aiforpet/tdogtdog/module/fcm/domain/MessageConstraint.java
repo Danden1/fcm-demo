@@ -1,5 +1,6 @@
 package com.aiforpet.tdogtdog.module.fcm.domain;
 
+import com.aiforpet.tdogtdog.module.fcm.domain.exception.InvalidMessageConstraintException;
 import lombok.Getter;
 
 import java.time.ZonedDateTime;
@@ -10,12 +11,12 @@ public class MessageConstraint {
     private final ZonedDateTime timeLimit;
     private final RequestLocation requestLocation;
 
-    public MessageConstraint(NotificationType notificationType, ZonedDateTime timeLimit, RequestLocation requestLocation){
+    public MessageConstraint(NotificationType notificationType, ZonedDateTime timeLimit, RequestLocation requestLocation) throws InvalidMessageConstraintException{
         this.notificationType = notificationType;
         this.timeLimit = timeLimit;
         this.requestLocation = requestLocation;
         if(!isValid()){
-            throw new NullPointerException("MessageConstraint not allow null");
+            throw new InvalidMessageConstraintException();
         }
     }
 

@@ -16,7 +16,7 @@ public class NotificationChecker implements DestroyChecker {
     @Override
     public boolean isDestroy(Message message) {
 
-        NotificationSettings deviceNotification = fcmDeviceRepository.findNotificationByDevice(message.getReceiveDevice());
+        NotificationSettings deviceNotification = fcmDeviceRepository.findNotificationSettingsByDevice(message.getReceiveDevice());
         NotificationType messageNotificationType = message.getNotificationType();
 
         return !deviceNotification.isNotification(messageNotificationType);

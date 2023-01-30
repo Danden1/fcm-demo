@@ -33,7 +33,7 @@ public class MessageDistributorImpl implements MessageDistributor {
 
     @Scheduled(fixedDelay = 100)
     @Transactional
-    public void takeOutMessage(){
+    public void takeOutMessages(){
         List<MessageEntity> messageEntities = messageBoxRepository.findTop8ByOrderByIdAsc();
         List<Message> messages = new ArrayList<>();
 
