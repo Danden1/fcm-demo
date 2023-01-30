@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface JpaNotificationRepository extends JpaRepository<NotificationSettings, Long> {
+public interface JpaNotificationSettingsRepository extends JpaRepository<NotificationSettings, Long> {
     public NotificationSettings findByAccount(Account account);
     public NotificationSettings findNotificationById(long id);
 

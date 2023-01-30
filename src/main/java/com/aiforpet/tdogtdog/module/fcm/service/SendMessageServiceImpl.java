@@ -18,9 +18,9 @@ public class SendMessageServiceImpl implements SendMessageService {
 
     private final MessageBox messageBox;
     private final FCMDeviceRepository fcmDeviceRepository;
-    private final NotificationRepository notificationRepository;
+    private final NotificationSettingsRepository notificationRepository;
 
-    public SendMessageServiceImpl(MessageBox messageBox, FCMDeviceRepository fcmDeviceRepository, NotificationRepository notificationRepository) {
+    public SendMessageServiceImpl(MessageBox messageBox, FCMDeviceRepository fcmDeviceRepository, NotificationSettingsRepository notificationRepository) {
         this.messageBox = messageBox;
         this.fcmDeviceRepository = fcmDeviceRepository;
         this.notificationRepository = notificationRepository;
@@ -31,13 +31,13 @@ public class SendMessageServiceImpl implements SendMessageService {
     @Transactional
     @Async
     public void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit) {
-        List<Account> accounts = notificationRepository.findAccountIdByAvailableNotificationContains(notificationType);
+        List<Account> accounts = notificationRepository.findAccountByAvailableNotificationContains(notificationType);
 
 
         List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByRequestLocationAndAccountIn(requestLocation, accounts);
 
         for(FCMDevice fcmDevice : fcmDevices){
-            Receiver receiver = new Receiver(fcmDevice.getDevice(), fcmDevice.getDeviceType(), fcmDevice.getAccount());
+            Receiver receiver = new Receiver(fcmDevice.getDevice(), fcmDevice.getDeviceType());
             MessageConstraint messageConstraint = new MessageConstraint(notificationType, timeLimit, requestLocation);
             Message message = new Message(title, body, data, receiver, messageConstraint);
 
@@ -56,7 +56,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByAccount(account);
 
         for(FCMDevice fcmDevice : fcmDevices){
-            Receiver receiver = new Receiver(fcmDevice.getDevice(), fcmDevice.getDeviceType(), fcmDevice.getAccount());
+            Receiver receiver = new Receiver(fcmDevice.getDevice(), fcmDevice.getDeviceType());
             MessageConstraint messageConstraint = new MessageConstraint(notificationType, timeLimit, requestLocation);
             Message message = new Message(title, body, data, receiver, messageConstraint);
 

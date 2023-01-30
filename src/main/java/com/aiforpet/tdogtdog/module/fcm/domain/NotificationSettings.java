@@ -42,11 +42,11 @@ public class NotificationSettings {
     }
 
 
-    public void updateNotification(NotificationType notificationType, NotificationControl notificationSetting){
-        if(notificationSetting == NotificationControl.ON){
+    public void updateNotification(NotificationType notificationType, NotificationControl notificationControl){
+        if(notificationControl== NotificationControl.ON){
             this.availableNotification.add(notificationType);
         }
-        if(notificationSetting == NotificationControl.OFF){
+        if(notificationControl == NotificationControl.OFF){
             this.availableNotification.remove(notificationType);
         }
     }

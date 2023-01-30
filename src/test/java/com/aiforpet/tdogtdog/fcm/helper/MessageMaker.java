@@ -8,31 +8,31 @@ import java.time.temporal.ChronoUnit;
 
 public class MessageMaker {
 
-    public Message makeValidTestMessage(String token, Account account){
+    public Message makeValidTestMessage(String token){
         MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().plus(1, ChronoUnit.HOURS), RequestLocation.TEST_BETWEEN_TIME);
-        Receiver receiver = new Receiver(token, DeviceType.IOS, account);
+        Receiver receiver = new Receiver(token, DeviceType.IOS);
 
         return new Message("hi", "hi", null, receiver, constraint);
     }
 
-    public Message makeEventMessage(String token, Account account){
+    public Message makeEventMessage(String token){
         MessageConstraint constraint = new MessageConstraint(NotificationType.EVENT, ZonedDateTime.now().plus(1, ChronoUnit.HOURS), RequestLocation.TEST_BETWEEN_TIME);
-        Receiver receiver = new Receiver(token, DeviceType.IOS, account);
+        Receiver receiver = new Receiver(token, DeviceType.IOS);
 
         return new Message("hi", "hi", null, receiver, constraint);
     }
 
 
-    public Message makeOverSendingTimeMessage(String token, Account account){
+    public Message makeOverSendingTimeMessage(String token){
         MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().plus(1, ChronoUnit.HOURS), RequestLocation.TEST_OVER_TIME);
-        Receiver receiver = new Receiver(token, DeviceType.IOS, account);
+        Receiver receiver = new Receiver(token, DeviceType.IOS);
 
         return new Message("hi", "hi", null, receiver, constraint);
     }
 
-    public Message makeOverTimeLimitMessage(String token, Account account){
+    public Message makeOverTimeLimitMessage(String token){
         MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().minus(1, ChronoUnit.HOURS), RequestLocation.TEST_BETWEEN_TIME);
-        Receiver receiver = new Receiver(token, DeviceType.IOS, account);
+        Receiver receiver = new Receiver(token, DeviceType.IOS);
 
         return new Message("hi", "hi", null, receiver, constraint);
     }

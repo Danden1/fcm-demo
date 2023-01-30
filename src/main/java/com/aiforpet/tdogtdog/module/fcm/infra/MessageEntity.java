@@ -50,12 +50,8 @@ public class MessageEntity {
     @Enumerated(EnumType.STRING)
     private RequestLocation requestLocation;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Account account;
 
     public void copy(MessageEntity messageEntity){
-        this.account = messageEntity.getAccount();
         this.data = messageEntity.getData();
         this.title = messageEntity.getTitle();
         this.body = messageEntity.getBody();

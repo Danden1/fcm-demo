@@ -35,13 +35,12 @@ public class MessageEntityMapper {
 
         messageEntity.setReceiveDevice(message.getReceiver().getReceiveDevice());
         messageEntity.setDeviceType(message.getReceiver().getDeviceType());
-        messageEntity.setAccount(message.getReceiver().getAccount());
 
         return messageEntity;
     }
 
     public Message mapMessageEntitytoMessage(MessageEntity messageEntity){
-        Receiver receiver = new Receiver(messageEntity.getReceiveDevice(), messageEntity.getDeviceType(), messageEntity.getAccount());
+        Receiver receiver = new Receiver(messageEntity.getReceiveDevice(), messageEntity.getDeviceType());
         MessageConstraint messageConstraint = new MessageConstraint(messageEntity.getNotificationType(), messageEntity.getTimeLimit(), messageEntity.getRequestLocation());
         Map<String, Object> data;
         try {

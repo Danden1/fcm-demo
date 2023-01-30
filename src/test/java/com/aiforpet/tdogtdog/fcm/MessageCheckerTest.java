@@ -23,14 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MessageCheckerTest {
 
     private final TestAccountRepository testAccountRepository;
-    private final NotificationRepository notificationRepository;
     private final FCMDeviceRepository fcmDeviceRepository;
     private final static String email = "test";
 
     @Autowired
-    public MessageCheckerTest(TestAccountRepository testAccountRepository, NotificationRepository notificationRepository, FCMDeviceRepository fcmDeviceRepository) {
+    public MessageCheckerTest(TestAccountRepository testAccountRepository, FCMDeviceRepository fcmDeviceRepository) {
         this.testAccountRepository = testAccountRepository;
-        this.notificationRepository = notificationRepository;
         this.fcmDeviceRepository = fcmDeviceRepository;
     }
 
@@ -56,7 +54,7 @@ public class MessageCheckerTest {
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().minus(30, ChronoUnit.MINUTES), RequestLocation.TEST_BETWEEN_TIME);
-            Receiver receiver = new Receiver("123", DeviceType.IOS, account);
+            Receiver receiver = new Receiver("123", DeviceType.IOS);
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
@@ -71,7 +69,7 @@ public class MessageCheckerTest {
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now().plus(30, ChronoUnit.MINUTES), RequestLocation.TEST_BETWEEN_TIME);
-            Receiver receiver = new Receiver("123", DeviceType.IOS, account);
+            Receiver receiver = new Receiver("123", DeviceType.IOS);
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
@@ -89,7 +87,7 @@ public class MessageCheckerTest {
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now(), RequestLocation.TEST_BETWEEN_TIME);
-            Receiver receiver = new Receiver("123", DeviceType.IOS, account);
+            Receiver receiver = new Receiver("123", DeviceType.IOS);
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
@@ -104,7 +102,7 @@ public class MessageCheckerTest {
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now(), RequestLocation.TEST_OVER_TIME);
-            Receiver receiver = new Receiver("123", DeviceType.IOS, account);
+            Receiver receiver = new Receiver("123", DeviceType.IOS);
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
@@ -122,7 +120,7 @@ public class MessageCheckerTest {
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, ZonedDateTime.now(), RequestLocation.TEST_BETWEEN_TIME);
-            Receiver receiver = new Receiver("123", DeviceType.IOS, account);
+            Receiver receiver = new Receiver("123", DeviceType.IOS);
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
 
@@ -136,7 +134,7 @@ public class MessageCheckerTest {
             Account account = testAccountRepository.findByEmail(email);
 
             MessageConstraint constraint = new MessageConstraint(NotificationType.EVENT, ZonedDateTime.now(), RequestLocation.TEST_BETWEEN_TIME);
-            Receiver receiver = new Receiver("123", DeviceType.IOS, account);
+            Receiver receiver = new Receiver("123", DeviceType.IOS);
 
             Message message = new Message("hi", "hi", null, receiver, constraint);
             assertTrue(notificationChecker.isDestroy(message));

@@ -24,7 +24,6 @@ public class MessageDistributorTest {
     private final DBMessageBox dbMessageBox;
     private final DBMessageBoxRepoHelper dbMessageBoxRepoHelper;
     private final TestAccountRepository testAccountRepository;
-    private final TestFCMDeviceRepository testFCMDeviceRepository;
 
     private final static String email = "test";
     private final static String token = "123";
@@ -34,12 +33,11 @@ public class MessageDistributorTest {
 
 
     @Autowired
-    public MessageDistributorTest(MessageDistributorImpl distributor, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, TestAccountRepository testAccountRepository, TestFCMDeviceRepository testFCMDeviceRepository) {
+    public MessageDistributorTest(MessageDistributorImpl distributor, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, TestAccountRepository testAccountRepository) {
         this.messageDistributor = distributor;
         this.dbMessageBox = dbMessageBox;
         this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;
         this.testAccountRepository = testAccountRepository;
-        this.testFCMDeviceRepository = testFCMDeviceRepository;
         this.messageMaker = new MessageMaker();
     }
 
@@ -72,7 +70,7 @@ public class MessageDistributorTest {
     @DisplayName("Event 메시지가 batch size(8)보다 박스에 적에 들어있는 경우 테스트(event의 defalut 알림 설정은 off)")
     public void testTakeOf5EventMessageAndPush() throws InterruptedException {
         int repeat = 5;
-        Message message = messageMaker.makeEventMessage(token, getAccount());
+        Message message = messageMaker.makeEventMessage(token);
 
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(message);
@@ -93,7 +91,7 @@ public class MessageDistributorTest {
     @DisplayName("메시지가 batch size(8)보다 박스에 많이 들어있는 경우 테스트")
     public void testTakeOfLagerThan8MessageAndPush() throws InterruptedException {
         int repeat = 10;
-        Message message = messageMaker.makeValidTestMessage(token,getAccount());
+        Message message = messageMaker.makeValidTestMessage(token);
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(message);
         }
@@ -112,7 +110,7 @@ public class MessageDistributorTest {
     @DisplayName("메시지가 batch size(8)보다 박스에 적게 들어있는 경우 테스트")
     public void testTakeOf5MessageAndPush() throws InterruptedException {
         int repeat = 5;
-        Message message = messageMaker.makeValidTestMessage(token, getAccount());
+        Message message = messageMaker.makeValidTestMessage(token);
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(message);
         }
@@ -132,7 +130,7 @@ public class MessageDistributorTest {
     @DisplayName("푸시 시간을 벗어난 메시지가 batch size(8)보다 박스에 적게 들어있는 경우 테스트(다시 박스에 넣어야 함)")
     public void testTakeOf5OverSendingTimeMessageAndPush() throws InterruptedException {
         int repeat = 5;
-        Message message = messageMaker.makeOverSendingTimeMessage(token, getAccount());
+        Message message = messageMaker.makeOverSendingTimeMessage(token);
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(message);
         }
@@ -154,7 +152,7 @@ public class MessageDistributorTest {
     @DisplayName("제한 시간을 지난 메시지가 batch size(8)보다 박스에 적게 들어있는 경우 테스트(박스에서 제거)")
     public void testTakeOf5OverTimeLimitMessageAndPush() throws InterruptedException {
         int repeat = 5;
-        Message invalidMessage = messageMaker.makeOverTimeLimitMessage(token, getAccount());
+        Message invalidMessage = messageMaker.makeOverTimeLimitMessage(token);
 
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(invalidMessage);

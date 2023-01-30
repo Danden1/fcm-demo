@@ -8,12 +8,10 @@ import lombok.Getter;
 public class Receiver {
     private final String receiveDevice;
     private final DeviceType deviceType;
-    private final Account account;
 
-    public Receiver(String receiveDevice, DeviceType deviceType, Account account){
+    public Receiver(String receiveDevice, DeviceType deviceType){
         this.receiveDevice = receiveDevice;
         this.deviceType = deviceType;
-        this.account = account;
 
         if(!isValid()){
             throw new NullPointerException("receiver not allow null.");
@@ -21,7 +19,7 @@ public class Receiver {
     }
 
     private boolean isValid(){
-        if(this.getReceiveDevice() == null || this.getDeviceType() == null || this.getAccount() == null){
+        if(this.getReceiveDevice() == null || this.getDeviceType() == null){
             return false;
         }
         return true;

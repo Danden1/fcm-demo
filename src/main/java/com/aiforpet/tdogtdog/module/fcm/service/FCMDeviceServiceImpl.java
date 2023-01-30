@@ -13,9 +13,9 @@ import java.util.Map;
 public class FCMDeviceServiceImpl implements FCMDeviceService{
 
     private final FCMDeviceRepository fcmDeviceRepository;
-    private final NotificationRepository notificationRepository;
+    private final NotificationSettingsRepository notificationRepository;
 
-    public FCMDeviceServiceImpl(FCMDeviceRepository fcmDeviceRepository, NotificationRepository notificationRepository) {
+    public FCMDeviceServiceImpl(FCMDeviceRepository fcmDeviceRepository, NotificationSettingsRepository notificationRepository) {
         this.fcmDeviceRepository = fcmDeviceRepository;
         this.notificationRepository = notificationRepository;
     }

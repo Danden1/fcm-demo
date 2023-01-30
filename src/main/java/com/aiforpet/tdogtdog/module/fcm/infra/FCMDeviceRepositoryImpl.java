@@ -14,9 +14,9 @@ import java.util.List;
 public class FCMDeviceRepositoryImpl implements FCMDeviceRepository {
 
     private final JpaFCMDeviceRepository jpaFCMDeviceRepository;
-    private final JpaNotificationRepository jpaNotificationRepository;
+    private final JpaNotificationSettingsRepository jpaNotificationRepository;
 
-    public FCMDeviceRepositoryImpl(JpaFCMDeviceRepository jpaFCMDeviceRepository, JpaNotificationRepository jpaNotificationRepository) {
+    public FCMDeviceRepositoryImpl(JpaFCMDeviceRepository jpaFCMDeviceRepository, JpaNotificationSettingsRepository jpaNotificationRepository) {
         this.jpaFCMDeviceRepository = jpaFCMDeviceRepository;
         this.jpaNotificationRepository = jpaNotificationRepository;
     }
