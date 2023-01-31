@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class SendMessageServiceImpl implements SendMessageService {
 
     @Override
     @Transactional
-    public void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit) {
+    public void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, LocalDateTime timeLimit) {
         List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByRequestLocationAndNotificationSettings_AvailableNotificationContains(requestLocation, notificationType);
 
         for(FCMDevice fcmDevice : fcmDevices){
@@ -43,7 +44,7 @@ public class SendMessageServiceImpl implements SendMessageService {
 
     @Override
     @Transactional
-    public void sendToDevice(Account account, NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, ZonedDateTime timeLimit) {
+    public void sendToDevice(Account account, NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, LocalDateTime timeLimit) {
         NotificationSettings notification = notificationRepository.findByAccount(account);
 
         if(!notification.isNotification(notificationType)) return;

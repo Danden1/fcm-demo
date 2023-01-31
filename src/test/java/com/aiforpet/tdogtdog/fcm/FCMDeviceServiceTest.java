@@ -139,9 +139,9 @@ public class FCMDeviceServiceTest {
             Account account = testAccountRepository.findByEmail(email);
 
             fcmDeviceService.createDevice(account,"123", DeviceType.IOS, RequestLocation.KOREA);
-            fcmDeviceService.updateRequestLocation("123", RequestLocation.US);
+            fcmDeviceService.updateRequestLocation("123", RequestLocation.US_LA);
 
-            assertEquals(RequestLocation.US, testFCMDeviceRepository.findByDevice("123").getRequestLocation());
+            assertEquals(RequestLocation.US_LA, testFCMDeviceRepository.findByDevice("123").getRequestLocation());
         }
     }
 

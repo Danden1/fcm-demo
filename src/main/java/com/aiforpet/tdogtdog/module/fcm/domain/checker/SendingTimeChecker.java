@@ -18,15 +18,19 @@ public class SendingTimeChecker implements ResendChecker{
 
     private boolean isSendTimeOver(RequestLocation requestLocation){
         if(requestLocation == RequestLocation.KOREA){
-            ZonedDateTime nowTime = ZonedDateTime.now(ZoneId.of("asia/seoul"));
+            ZonedDateTime nowTime = ZonedDateTime.now(requestLocation.getTimeZone());
 
-            return !(8 <= nowTime.getHour() && nowTime.getHour() <= 20);
+            return !(8 <= nowTime.getHour() && nowTime.getHour() < 17);
         }
-        else if(requestLocation == RequestLocation.US){
-            return true;
+        else if(requestLocation == RequestLocation.US_LA){
+            ZonedDateTime nowTime = ZonedDateTime.now(requestLocation.getTimeZone());
+
+            return !(8 <= nowTime.getHour() && nowTime.getHour() < 19);
         }
         else if(requestLocation == RequestLocation.GERMANY){
-            return true;
+            ZonedDateTime nowTime = ZonedDateTime.now(requestLocation.getTimeZone());
+
+            return !(8 <= nowTime.getHour() && nowTime.getHour() < 18);
         }
         else if(requestLocation == RequestLocation.TEST_BETWEEN_TIME){
             return !ZonedDateTime.now().isBefore(ZonedDateTime.now().plus(5, ChronoUnit.MINUTES));

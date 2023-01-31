@@ -26,7 +26,7 @@ public class MessageDistributorTest {
     private final TestAccountRepository testAccountRepository;
 
     private final static String email = "test";
-    private final static String token = "123";
+    private final static String token = "";
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -68,15 +68,15 @@ public class MessageDistributorTest {
 
     @Test
     @DisplayName("Event 메시지가 batch size(8)보다 박스에 적에 들어있는 경우 테스트(event의 defalut 알림 설정은 off)")
-    public void testTakeOf5EventMessageAndPush() throws InterruptedException {
-        int repeat = 5;
+    public void testTakeOfLessThanBatchEventMessageAndPush() throws InterruptedException {
+        int repeat = 3;
         Message message = messageMaker.makeEventMessage(token);
 
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(message);
         }
         await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
+                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
         messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
@@ -84,12 +84,11 @@ public class MessageDistributorTest {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
                     assertEquals("", outContent.toString());
                 });
-
     }
 
     @Test
-    @DisplayName("메시지가 batch size(8)보다 박스에 많이 들어있는 경우 테스트")
-    public void testTakeOfLagerThan8MessageAndPush() throws InterruptedException {
+    @DisplayName("메시지가 batch size(8)보다 박스에 많이 들어있는 경우 테스트.")
+    public void testTakeOfLagerThanBatchMessageAndPush() throws InterruptedException {
         int repeat = 10;
         Message message = messageMaker.makeValidTestMessage(token);
         for(int i = 0; i < repeat; i++) {
@@ -108,40 +107,39 @@ public class MessageDistributorTest {
     }
     @Test
     @DisplayName("메시지가 batch size(8)보다 박스에 적게 들어있는 경우 테스트")
-    public void testTakeOf5MessageAndPush() throws InterruptedException {
-        int repeat = 5;
+    public void testTakeOfLessThanBatchMessageAndPush() throws InterruptedException {
+        int repeat = 3;
         Message message = messageMaker.makeValidTestMessage(token);
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(message);
         }
         await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
+                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
         messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
-                    assertEquals(String.format("%s%n", messageMaker.getPushMessage(token)).repeat(5), outContent.toString());
+                    assertEquals(String.format("%s%n", messageMaker.getPushMessage(token)).repeat(3), outContent.toString());
                 });
-
     }
 
     @Test
     @DisplayName("푸시 시간을 벗어난 메시지가 batch size(8)보다 박스에 적게 들어있는 경우 테스트(다시 박스에 넣어야 함)")
-    public void testTakeOf5OverSendingTimeMessageAndPush() throws InterruptedException {
-        int repeat = 5;
+    public void testTakeOfLessThanBatchOverSendingTimeMessageAndPush() throws InterruptedException {
+        int repeat = 3;
         Message message = messageMaker.makeOverSendingTimeMessage(token);
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(message);
         }
         await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
+                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
 
         messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
-                    assertEquals(5, dbMessageBoxRepoHelper.findAll().size());
+                    assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
                     assertEquals("", outContent.toString());
                 });
     }
@@ -150,15 +148,15 @@ public class MessageDistributorTest {
 
     @Test
     @DisplayName("제한 시간을 지난 메시지가 batch size(8)보다 박스에 적게 들어있는 경우 테스트(박스에서 제거)")
-    public void testTakeOf5OverTimeLimitMessageAndPush() throws InterruptedException {
-        int repeat = 5;
+    public void testTakeOfLessThanBatchOverTimeLimitMessageAndPush() throws InterruptedException {
+        int repeat = 3;
         Message invalidMessage = messageMaker.makeOverTimeLimitMessage(token);
 
         for(int i = 0; i < repeat; i++) {
             dbMessageBox.collectMessage(invalidMessage);
         }
         await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
+                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
         messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
