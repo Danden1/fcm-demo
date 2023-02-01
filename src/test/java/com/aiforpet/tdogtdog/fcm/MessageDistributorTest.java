@@ -144,6 +144,26 @@ public class MessageDistributorTest {
                 });
     }
 
+    @Test
+    @DisplayName("예약 메시지가 batch size(8)보다 박스에 적게 들어있는 경우 테스트(다시 박스에 넣어야 함)")
+    public void testTakeOfLessThanBatchReservationMessageAndPush() throws InterruptedException {
+        int repeat = 3;
+        Message message = messageMaker.makeReservatinMessage(token);
+        for(int i = 0; i < repeat; i++) {
+            dbMessageBox.collectMessage(message);
+        }
+        await().atMost(1, SECONDS)
+                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
+
+
+        messageDistributor.takeOutMessages();
+        await().atMost(1, SECONDS)
+                .untilAsserted(() -> {
+                    assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
+                    assertEquals("", outContent.toString());
+                });
+    }
+
 
 
     @Test

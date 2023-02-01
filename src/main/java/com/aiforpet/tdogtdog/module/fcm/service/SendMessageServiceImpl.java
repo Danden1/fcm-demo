@@ -2,13 +2,11 @@ package com.aiforpet.tdogtdog.module.fcm.service;
 
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +28,12 @@ public class SendMessageServiceImpl implements SendMessageService {
 
     @Override
     @Transactional
-    public void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, LocalDateTime timeLimit) {
+    public void sendToAllDevice(NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, LocalDateTime timeLimit, LocalDateTime requestTime) {
         List<FCMDevice>  fcmDevices = fcmDeviceRepository.findAllByRequestLocationAndNotificationSettings_AvailableNotificationContains(requestLocation, notificationType);
 
         for(FCMDevice fcmDevice : fcmDevices){
             Receiver receiver = new Receiver(fcmDevice.getDevice(), fcmDevice.getDeviceType());
-            MessageConstraint messageConstraint = new MessageConstraint(notificationType, timeLimit, requestLocation);
+            MessageConstraint messageConstraint = new MessageConstraint(notificationType, timeLimit, requestLocation, requestTime);
             Message message = new Message(title, body, data, receiver, messageConstraint);
 
             messageBox.collectMessage(message);
@@ -44,7 +42,7 @@ public class SendMessageServiceImpl implements SendMessageService {
 
     @Override
     @Transactional
-    public void sendToDevice(Account account, NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, LocalDateTime timeLimit) {
+    public void sendToDevice(Account account, NotificationType notificationType, String body, String title, Map<String, Object> data, RequestLocation requestLocation, LocalDateTime timeLimit, LocalDateTime requestTime) {
         NotificationSettings notification = notificationRepository.findByAccount(account);
 
         if(!notification.isNotification(notificationType)) return;
@@ -53,7 +51,7 @@ public class SendMessageServiceImpl implements SendMessageService {
 
         for(FCMDevice fcmDevice : fcmDevices){
             Receiver receiver = new Receiver(fcmDevice.getDevice(), fcmDevice.getDeviceType());
-            MessageConstraint messageConstraint = new MessageConstraint(notificationType, timeLimit, requestLocation);
+            MessageConstraint messageConstraint = new MessageConstraint(notificationType, timeLimit, requestLocation, requestTime);
             Message message = new Message(title, body, data, receiver, messageConstraint);
 
             messageBox.collectMessage(message);

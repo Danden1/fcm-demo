@@ -84,7 +84,7 @@ public class SendMessageServiceTest {
         @Test
         @DisplayName("모든 디바이스에 보낼 메시지가 박스에 들어가는 지 테스트")
         void testSendToAllDevices(){
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
+            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
@@ -97,7 +97,7 @@ public class SendMessageServiceTest {
             otherNotification.updateNotification(NotificationType.TEST, NotificationControl.OFF);
             testNotificationRepository.save(otherNotification);
 
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
+            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
@@ -109,12 +109,12 @@ public class SendMessageServiceTest {
             Account testAccount = accountHelper.createAccount("test2");
             fcmDeviceHelper.createDevice(testAccount, "456", DeviceType.IOS, RequestLocation.KOREA);
 
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
+            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.KOREA, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
+            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.KOREA, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(6, dbMessageBoxRepoHelper.findAll().size()));
@@ -127,7 +127,7 @@ public class SendMessageServiceTest {
         @DisplayName("특정 계정의 TEST 알림이 켜져있을 경우, 메시지가 박스에 들어가는 지 테스트 ")
         void testSendToTestOnDevice(){
             Account account = testAccountRepository.findByEmail(email);
-            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now());
+            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now(), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
@@ -142,7 +142,7 @@ public class SendMessageServiceTest {
 
             Account account = testAccountRepository.findByEmail(otherEmail);
 
-            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now());
+            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now(), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(0, dbMessageBoxRepoHelper.findAll().size()));

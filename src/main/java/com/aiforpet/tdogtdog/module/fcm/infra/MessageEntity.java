@@ -48,6 +48,9 @@ public class MessageEntity {
     private LocalDateTime timeLimit;
 
     @Column(nullable = false)
+    private LocalDateTime requestTime;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private RequestLocation requestLocation;
 

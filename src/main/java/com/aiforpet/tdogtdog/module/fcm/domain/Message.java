@@ -29,6 +29,9 @@ public class Message {
     public LocalDateTime getTimeLimit(){
         return messageConstraint.getTimeLimit();
     }
+    public LocalDateTime getRequestTime(){
+        return messageConstraint.getRequestTime();
+    }
 
 
     public String getReceiveDevice(){

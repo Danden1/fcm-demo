@@ -4,25 +4,26 @@ import com.aiforpet.tdogtdog.module.fcm.domain.exception.InvalidMessageConstrain
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Getter
 public class MessageConstraint {
     private final NotificationType notificationType;
     private final LocalDateTime timeLimit;
     private final RequestLocation requestLocation;
+    private final LocalDateTime requestTime;
 
-    public MessageConstraint(NotificationType notificationType, LocalDateTime timeLimit, RequestLocation requestLocation) throws InvalidMessageConstraintException{
+    public MessageConstraint(NotificationType notificationType, LocalDateTime timeLimit, RequestLocation requestLocation, LocalDateTime requestTime) throws InvalidMessageConstraintException{
         this.notificationType = notificationType;
         this.timeLimit = timeLimit;
         this.requestLocation = requestLocation;
+        this.requestTime = requestTime;
         if(!isValid()){
             throw new InvalidMessageConstraintException();
         }
     }
 
     private boolean isValid(){
-        if(this.getRequestLocation() == null || this.getNotificationType() == null || this.getTimeLimit() == null){
+        if(this.getRequestLocation() == null || this.getNotificationType() == null || this.getTimeLimit() == null || this.requestTime == null){
             return false;
         }
         return true;

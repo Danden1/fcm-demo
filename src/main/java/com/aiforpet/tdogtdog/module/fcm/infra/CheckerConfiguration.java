@@ -10,12 +10,17 @@ import org.springframework.context.annotation.Configuration;
 public class CheckerConfiguration {
 
     @Bean
-    public ResendChecker messagePushTimeValidator(){
+    public ResendChecker messageSendingTimeChecker(){
         return new SendingTimeChecker();
     }
 
     @Bean
-    public DestroyChecker timeLimitChekcer(){
+    public ResendChecker messageReservationChecker(){
+        return new ReservationChecker();
+    }
+
+    @Bean
+    public DestroyChecker timeLimitChecker(){
         return new TimeLimitChecker();
 
     }

@@ -32,6 +32,7 @@ public class MessageEntityMapper {
         messageEntity.setTimeLimit(message.getTimeLimit());
         messageEntity.setNotificationType(message.getNotificationType());
         messageEntity.setRequestLocation(message.getRequestLocation());
+        messageEntity.setRequestTime(message.getRequestTime());
 
         messageEntity.setReceiveDevice(message.getReceiveDevice());
         messageEntity.setDeviceType(message.getDeviceType());
@@ -41,7 +42,7 @@ public class MessageEntityMapper {
 
     public Message mapMessageEntitytoMessage(MessageEntity messageEntity){
         Receiver receiver = new Receiver(messageEntity.getReceiveDevice(), messageEntity.getDeviceType());
-        MessageConstraint messageConstraint = new MessageConstraint(messageEntity.getNotificationType(), messageEntity.getTimeLimit(), messageEntity.getRequestLocation());
+        MessageConstraint messageConstraint = new MessageConstraint(messageEntity.getNotificationType(), messageEntity.getTimeLimit(), messageEntity.getRequestLocation(), messageEntity.getRequestTime());
         Map<String, Object> data;
         try {
             data = objectMapper.readValue(messageEntity.getData(), Map.class);

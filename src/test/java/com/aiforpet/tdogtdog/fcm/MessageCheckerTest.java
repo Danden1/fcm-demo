@@ -4,6 +4,7 @@ import com.aiforpet.tdogtdog.fcm.helper.*;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.NotificationChecker;
+import com.aiforpet.tdogtdog.module.fcm.domain.checker.ReservationChecker;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.SendingTimeChecker;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.TimeLimitChecker;
 import org.junit.jupiter.api.*;
@@ -81,6 +82,29 @@ public class MessageCheckerTest {
             SendingTimeChecker sendingTimeChecker = new SendingTimeChecker();
 
             Message message = messageMaker.makeOverSendingTimeMessage("123");
+
+            assertTrue(sendingTimeChecker.isResend(message));
+        }
+    }
+
+    @Nested
+    class ReservationTest{
+        @Test
+        @DisplayName("예약 시간이 현재인 경우 테스트")
+        public void testBetweenSendingTime(){
+            ReservationChecker sendingTimeChecker = new ReservationChecker();
+
+            Message message = messageMaker.makeValidTestMessage("123");
+
+            assertFalse(sendingTimeChecker.isResend(message));
+        }
+
+        @Test
+        @DisplayName("예약 시간 전인 경우 테스트")
+        public void testAfterSendingTime(){
+            ReservationChecker sendingTimeChecker = new ReservationChecker();
+
+            Message message = messageMaker.makeReservatinMessage("123");
 
             assertTrue(sendingTimeChecker.isResend(message));
         }
