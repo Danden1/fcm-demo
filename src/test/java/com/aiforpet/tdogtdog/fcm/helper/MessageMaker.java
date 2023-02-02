@@ -59,4 +59,7 @@ public class MessageMaker {
     public String getPushMessage(String token){
         return String.format("{\"to\":\"%s\",\"notification\":{\"title\":\"hi\",\"body\":\"hi\"},\"data\":{\"hi\":123}}", token);
     }
+    public String getMessage(String token){
+        return String.format("hi hi {hi=123} %s", token);
+    }
 }

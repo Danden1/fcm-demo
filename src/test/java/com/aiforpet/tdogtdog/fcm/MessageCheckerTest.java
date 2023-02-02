@@ -7,9 +7,17 @@ import com.aiforpet.tdogtdog.module.fcm.domain.checker.NotificationChecker;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.ReservationChecker;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.SendingTimeChecker;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.TimeLimitChecker;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +28,23 @@ public class MessageCheckerTest {
     private final MessageMaker messageMaker;
     private final FCMDeviceRepository fcmDeviceRepository;
     private final static String email = "test";
+
+    @MockBean
+    private MessageDistributor messageDistributor;
+    @MockBean
+    private MessageBox messageBox;
+    @MockBean
+    private ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory;
+    @MockBean
+    private KafkaAdmin kafkaAdmin;
+    @MockBean
+    private NewTopic newTopic;
+    @MockBean
+    private ProducerFactory<String, String> producerFactory;
+    @MockBean
+    private KafkaTemplate<String, String> kafkaTemplate;
+    @MockBean
+    private ConsumerFactory<? super String, ? super String> consumerFactory;
 
     @Autowired
     public MessageCheckerTest(FCMDeviceRepository fcmDeviceRepository) {

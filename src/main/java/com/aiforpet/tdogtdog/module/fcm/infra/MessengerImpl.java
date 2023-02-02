@@ -44,8 +44,8 @@ public class MessengerImpl implements Messenger {
         HttpEntity<PushMessageDto> entity = new HttpEntity<>(httpMessageDto, httpHeaders);
 
         try {
-            Map<String, Object> res = restTemplate.postForObject(this.firebaseUrl, entity, Map.class);
             System.out.println(objectMapper.writeValueAsString(httpMessageDto));
+            Map<String, Object> res = restTemplate.postForObject(this.firebaseUrl, entity, Map.class);
 
             if(fcmErrorChecker.isError(res)){
                 FCMErrorType fcmErrorType = fcmErrorChecker.getErrorType(res);

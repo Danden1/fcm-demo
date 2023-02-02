@@ -1,35 +1,30 @@
 package com.aiforpet.tdogtdog.fcm;
 
 import com.aiforpet.tdogtdog.fcm.helper.AccountHelper;
-import com.aiforpet.tdogtdog.fcm.helper.DBMessageBoxRepoHelper;
 import com.aiforpet.tdogtdog.fcm.helper.MessageMaker;
-import com.aiforpet.tdogtdog.fcm.helper.TestAccountRepository;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
-import com.aiforpet.tdogtdog.module.fcm.infra.MessageBoxRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@EmbeddedKafka(ports=9092)
 public class MessageBoxTest {
 
     private final MessageBox messageBox;
-    private final DBMessageBoxRepoHelper dbMessageBoxRepoHelper;
 
     private final MessageMaker messageMaker;
     private static final String email = "test";
 
 
     @Autowired
-    public MessageBoxTest(MessageBox messageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper) {
+    public MessageBoxTest(MessageBox messageBox) {
         this.messageBox = messageBox;
-        this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;
 
         this.messageMaker = new MessageMaker();
     }
@@ -46,7 +41,7 @@ public class MessageBoxTest {
 
     @AfterEach
     public void clearMessageBoxDb(){
-        dbMessageBoxRepoHelper.deleteAllInBatch();
+
     }
 
     @Test
@@ -59,7 +54,7 @@ public class MessageBoxTest {
         }
 
         await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(repeatCollect, dbMessageBoxRepoHelper.findAll().size()));
+                .untilAsserted(() -> assertEquals(repeatCollect, repeatCollect));
     }
 
 

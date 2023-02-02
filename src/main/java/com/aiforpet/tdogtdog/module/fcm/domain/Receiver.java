@@ -3,6 +3,7 @@ package com.aiforpet.tdogtdog.module.fcm.domain;
 
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.exception.InvalidReceiverException;
+import lombok.Data;
 import lombok.Getter;
 
 @Getter

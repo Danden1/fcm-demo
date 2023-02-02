@@ -24,6 +24,12 @@ AiForPet(TTcare) 회사에서 인턴을 하면서 구현하고 있다.
 2. push를 한 번에 보내지 않고, delay를 주고 전송해야 한다.
 3. push를 예약한 시간대에 보낼 수 있어야 한다.
 
+### 구현 기술
+
+master branch 에서는 DB를 이용하여 MessageBox를 구현한다.
+
+kafka branch 에서는 kafka를 이용하여 MessageBox를 구현한다.
+
 
 
 

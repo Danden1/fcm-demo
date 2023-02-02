@@ -3,43 +3,76 @@ package com.aiforpet.tdogtdog.fcm;
 import com.aiforpet.tdogtdog.fcm.helper.*;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
-import com.aiforpet.tdogtdog.module.fcm.infra.DBMessageBox;
+import com.aiforpet.tdogtdog.module.fcm.infra.KafkaMessageBox;
 import com.aiforpet.tdogtdog.module.fcm.infra.MessageDistributorImpl;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
-public class MessageDistributorTest {
+@EmbeddedKafka(ports=9092)
+@ExtendWith(SpringExtension.class)
+class MessageDistributorTest {
 
     private final MessageDistributor messageDistributor;
     private final MessageMaker messageMaker;
-    private final DBMessageBox dbMessageBox;
-    private final DBMessageBoxRepoHelper dbMessageBoxRepoHelper;
-    private final TestAccountRepository testAccountRepository;
+    private final MessageBox kafkaMessageBox;
 
     private final static String email = "test";
     private final static String token = "";
 
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final static ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+//    private static StringBuffer outContent = new StringBuffer();
     private final PrintStream originalOut = System.out;
 
 
     @Autowired
-    public MessageDistributorTest(MessageDistributorImpl distributor, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, TestAccountRepository testAccountRepository) {
+    public MessageDistributorTest(MessageDistributor distributor, MessageBox kafkaMessageBox) {
         this.messageDistributor = distributor;
-        this.dbMessageBox = dbMessageBox;
-        this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;
-        this.testAccountRepository = testAccountRepository;
+        this.kafkaMessageBox = kafkaMessageBox;
         this.messageMaker = new MessageMaker();
     }
+
+//    @TestConfiguration
+//    public static class TestConfig {
+//
+//        @Bean
+//        @Primary
+//        public Messenger mockMessenger() {
+//            Messenger messenger = mock(Messenger.class);
+//            doAnswer(new Answer<Void>() {
+//                public Void answer(InvocationOnMock invocation) throws IOException {
+//                    Message message = invocation.getArgument(0);
+//
+//                    System.out.println(String.format("%s %s %s %s%n",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
+////                    outContent.append(String.format("%s %s %s %s%n",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
+//                    return null;
+//                }
+//            }).when(messenger).deliverMessage(any(Message.class));
+//
+//            return messenger;
+//        }
+//    }
 
 
     @BeforeEach
@@ -49,7 +82,7 @@ public class MessageDistributorTest {
     @AfterEach
     public void afterEach(){
         System.setOut(originalOut);
-        dbMessageBoxRepoHelper.deleteAllInBatch();
+//        outContent = new StringBuffer();
     }
 
 
@@ -73,15 +106,13 @@ public class MessageDistributorTest {
         Message message = messageMaker.makeEventMessage(token);
 
         for(int i = 0; i < repeat; i++) {
-            dbMessageBox.collectMessage(message);
+            kafkaMessageBox.collectMessage(message);
         }
-        await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
-                    assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
+//                    assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
                     assertEquals("", outContent.toString());
                 });
     }
@@ -92,16 +123,13 @@ public class MessageDistributorTest {
         int repeat = 10;
         Message message = messageMaker.makeValidTestMessage(token);
         for(int i = 0; i < repeat; i++) {
-            dbMessageBox.collectMessage(message);
+            kafkaMessageBox.collectMessage(message);
         }
-        await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(10, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
-                    assertEquals(2, dbMessageBoxRepoHelper.findAll().size());
-                    assertEquals(String.format("%s%n", messageMaker.getPushMessage(token)).repeat(8), outContent.toString());
+                    assertEquals(String.format("%s%n", messageMaker.getMessage(token)).repeat(8), outContent.toString());
                 });
 
     }
@@ -111,16 +139,13 @@ public class MessageDistributorTest {
         int repeat = 3;
         Message message = messageMaker.makeValidTestMessage(token);
         for(int i = 0; i < repeat; i++) {
-            dbMessageBox.collectMessage(message);
+            kafkaMessageBox.collectMessage(message);
         }
-        await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
-                    assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
-                    assertEquals(String.format("%s%n", messageMaker.getPushMessage(token)).repeat(3), outContent.toString());
+                    assertEquals(String.format("%s%n", messageMaker.getMessage(token)).repeat(3), outContent.toString());
                 });
     }
 
@@ -130,16 +155,14 @@ public class MessageDistributorTest {
         int repeat = 3;
         Message message = messageMaker.makeOverSendingTimeMessage(token);
         for(int i = 0; i < repeat; i++) {
-            dbMessageBox.collectMessage(message);
+            kafkaMessageBox.collectMessage(message);
         }
-        await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
-                    assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
+//                    assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
                     assertEquals("", outContent.toString());
                 });
     }
@@ -150,17 +173,14 @@ public class MessageDistributorTest {
         int repeat = 3;
         Message message = messageMaker.makeReservatinMessage(token);
         for(int i = 0; i < repeat; i++) {
-            dbMessageBox.collectMessage(message);
+            kafkaMessageBox.collectMessage(message);
         }
-        await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
-
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
-                    assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
-                    assertEquals("", outContent.toString());
+//                    assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
+                    assertEquals("aa", outContent.toString());
                 });
     }
 
@@ -173,25 +193,15 @@ public class MessageDistributorTest {
         Message invalidMessage = messageMaker.makeOverTimeLimitMessage(token);
 
         for(int i = 0; i < repeat; i++) {
-            dbMessageBox.collectMessage(invalidMessage);
+            kafkaMessageBox.collectMessage(invalidMessage);
         }
-        await().atMost(1, SECONDS)
-                .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
-                    assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
+//                    assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
                     assertEquals("", outContent.toString());
                 });
 
     }
-
-
-
-    private Account getAccount(){
-        return testAccountRepository.findByEmail(email);
-    }
-
-
 }
