@@ -19,6 +19,6 @@ public enum FCMErrorType {
     }
 
     public String getErrorMessage(Message message){
-        return String.format("%s {\"title\":%s, \"body\":%s}, \"device\":%s", this.errorMessage,message.getTitle(), message.getBody(), message.getReceiveDevice());
+        return String.format("%s [title : %s, body : %s, data : %s, device : %s]", this.errorMessage,message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice());
     }
 }

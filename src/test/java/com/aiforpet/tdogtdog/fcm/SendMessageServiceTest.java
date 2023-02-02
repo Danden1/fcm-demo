@@ -84,17 +84,17 @@ public class SendMessageServiceTest {
 
         @Test
         @DisplayName("모든 디바이스에 보낼 메시지가 박스에 들어가는 지 테스트")
-        void testSendToAllDevices(){
+        void testSendToAllDevicesf(){
             sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     //메시지 박스 사이즈로 리팩터링 필요
                     .untilAsserted(() -> assertEquals(5, 5));
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Test

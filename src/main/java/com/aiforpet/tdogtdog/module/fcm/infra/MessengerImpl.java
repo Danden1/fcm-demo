@@ -7,6 +7,7 @@ import com.aiforpet.tdogtdog.module.fcm.domain.exception.FCMErrorType;
 import com.aiforpet.tdogtdog.module.fcm.dto.PushMessageDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -16,11 +17,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class MessengerImpl implements Messenger {
 
     private final HttpMessageMapper httpMessageMapper;
-    private final ObjectMapper objectMapper;
-
     private final String firebaseUrl = "https://fcm.googleapis.com/fcm/send";
     private final String firebaseAuthKey = "";
 
@@ -33,7 +33,6 @@ public class MessengerImpl implements Messenger {
     public MessengerImpl(HttpMessageMapper httpMessageMapper, FCMErrorHandler fcmErrorHandler) {
         this.httpMessageMapper = httpMessageMapper;
         this.fcmErrorHandler = fcmErrorHandler;
-        this.objectMapper = new ObjectMapper();
         this.httpHeaders.add("Content-Type", "application/json; charset=utf-8");
         this.httpHeaders.add("Authorization", this.firebaseAuthKey);
     }
@@ -44,16 +43,15 @@ public class MessengerImpl implements Messenger {
         HttpEntity<PushMessageDto> entity = new HttpEntity<>(httpMessageDto, httpHeaders);
 
         try {
-            System.out.println(objectMapper.writeValueAsString(httpMessageDto));
             Map<String, Object> res = restTemplate.postForObject(this.firebaseUrl, entity, Map.class);
 
-            if(fcmErrorChecker.isError(res)){
+            if (fcmErrorChecker.isError(res)) {
                 FCMErrorType fcmErrorType = fcmErrorChecker.getErrorType(res);
                 fcmErrorHandler.handleError(fcmErrorType, message);
             }
-
-        }catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            else {
+                log.info(String.format("Push Success [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));
+            }
         }catch(HttpClientErrorException e) {
             int httpCode = e.getRawStatusCode();
 

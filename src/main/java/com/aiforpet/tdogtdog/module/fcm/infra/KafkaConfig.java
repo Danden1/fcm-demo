@@ -25,6 +25,10 @@ public class KafkaConfig {
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
+    private final static int BATCH_SIZE = 8;
+
+    private final static int CONSUME_DELAY_MS = 100;
+
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String, Object> configs = new HashMap<>();
@@ -38,7 +42,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
+    public ProducerFactory<String, Message> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -48,17 +52,17 @@ public class KafkaConfig {
                 StringSerializer.class);
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                JsonSerializer.class);
+                CustomSerializer.class);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
+    public KafkaTemplate<String, Message> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ConsumerFactory<? super String, ? super String> consumerFactory() {
+    public ConsumerFactory<? super String, ? super Message> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -71,14 +75,10 @@ public class KafkaConfig {
                 StringDeserializer.class);
         props.put(
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                JsonDeserializer.class);
-        //batch size
+                CustomDeserializer.class);
         props.put(
                 ConsumerConfig.MAX_POLL_RECORDS_CONFIG,
-                8);
-//        props.put(
-//                ConsumerConfig.,
-//                1000);
+                BATCH_SIZE);
         props.put(
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
                 "latest");
@@ -89,13 +89,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String>
+    public ConcurrentKafkaListenerContainerFactory<String, Message>
     kafkaListenerContainerFactory() {
 
-        ConcurrentKafkaListenerContainerFactory<String, String> factory =
+        ConcurrentKafkaListenerContainerFactory<String, Message> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.getContainerProperties().setIdleBetweenPolls(100);
+        factory.getContainerProperties().setIdleBetweenPolls(CONSUME_DELAY_MS);
         factory.setBatchListener(true);
         return factory;
     }

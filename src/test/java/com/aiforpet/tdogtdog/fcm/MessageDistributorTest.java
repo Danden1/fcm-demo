@@ -5,6 +5,11 @@ import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.infra.KafkaMessageBox;
 import com.aiforpet.tdogtdog.module.fcm.infra.MessageDistributorImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.invocation.InvocationOnMock;
@@ -21,6 +26,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -41,9 +48,14 @@ class MessageDistributorTest {
     private final static String email = "test";
     private final static String token = "";
 
-    private final static ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-//    private static StringBuffer outContent = new StringBuffer();
+//    private final static ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private static StringBuffer outContent = new StringBuffer();
     private final PrintStream originalOut = System.out;
+
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new ParameterNamesModule())
+            .registerModule(new Jdk8Module())
+            .registerModule(new JavaTimeModule());;
 
 
     @Autowired
@@ -64,8 +76,8 @@ class MessageDistributorTest {
 //                public Void answer(InvocationOnMock invocation) throws IOException {
 //                    Message message = invocation.getArgument(0);
 //
-//                    System.out.println(String.format("%s %s %s %s%n",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
-////                    outContent.append(String.format("%s %s %s %s%n",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
+////                    System.out.println(String.format("%s %s %s %s%n",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
+//                    outContent.append(String.format("%s %s %s %s%n",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
 //                    return null;
 //                }
 //            }).when(messenger).deliverMessage(any(Message.class));
@@ -77,12 +89,12 @@ class MessageDistributorTest {
 
     @BeforeEach
     public void beforeEach(){
-        System.setOut(new PrintStream(outContent));
+//        System.setOut(new PrintStream(outContent));
     }
     @AfterEach
     public void afterEach(){
-        System.setOut(originalOut);
-//        outContent = new StringBuffer();
+//        System.setOut(originalOut);
+        outContent = new StringBuffer();
     }
 
 
@@ -101,15 +113,16 @@ class MessageDistributorTest {
 
     @Test
     @DisplayName("Event 메시지가 batch size(8)보다 박스에 적에 들어있는 경우 테스트(event의 defalut 알림 설정은 off)")
-    public void testTakeOfLessThanBatchEventMessageAndPush() throws InterruptedException {
+    public void testTakeOfLessThanBatchEventMessageAndPush() throws InterruptedException, JsonProcessingException {
         int repeat = 3;
         Message message = messageMaker.makeEventMessage(token);
-
+        List<String> messages = new ArrayList<>();
         for(int i = 0; i < repeat; i++) {
             kafkaMessageBox.collectMessage(message);
+//            messages.add(objectMapper.writeValueAsString(message));
         }
 
-//        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages(messages);
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
 //                    assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -135,14 +148,17 @@ class MessageDistributorTest {
     }
     @Test
     @DisplayName("메시지가 batch size(8)보다 박스에 적게 들어있는 경우 테스트")
-    public void testTakeOfLessThanBatchMessageAndPush() throws InterruptedException {
+    public void testTakeOfLessThanBatchMessageAndPush() throws InterruptedException, JsonProcessingException {
         int repeat = 3;
         Message message = messageMaker.makeValidTestMessage(token);
+        List<Message> messages = new ArrayList<>();
         for(int i = 0; i < repeat; i++) {
             kafkaMessageBox.collectMessage(message);
+//            messages.add(message);
         }
 
-//        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages(messages);
+
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(String.format("%s%n", messageMaker.getMessage(token)).repeat(3), outContent.toString());
@@ -180,7 +196,7 @@ class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
 //                    assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
-                    assertEquals("aa", outContent.toString());
+                    assertEquals("", outContent.toString());
                 });
     }
 

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class MessageDistributorImpl implements MessageDistributor {
     private final String TOPIC = "fcm";
 
@@ -40,26 +42,24 @@ public class MessageDistributorImpl implements MessageDistributor {
 
 
     @KafkaListener(topics = TOPIC, groupId = "fcm")
-    public void takeOutMessages(List<String> messages){
+    public void takeOutMessages(List<Message> messages){
         List<Message> validMessages = new ArrayList<>();
-        System.out.println("listen");
-        System.out.println(messages.size());
-        for(String messageEntity : messages) {
-            Message message = null;
-            try {
-                message = objectMapper.readValue(messageEntity, Message.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+
+        log.info(String.format("Take Out %d messages.", messages.size()));
+
+        for(Message message : messages) {
 
             if(isDestroy(message)){
+                log.info(String.format("Destroy Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
                 continue;
             }
             if(isResend(message)){
-                System.out.println("?!");
+                log.info(String.format("Resend Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
                 kafkaMessageBox.collectMessage(message);
                 continue;
             }
+
+            log.info(String.format("Valid Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
 
             validMessages.add(message);
         }
