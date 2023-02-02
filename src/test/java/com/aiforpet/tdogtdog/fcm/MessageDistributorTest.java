@@ -6,8 +6,15 @@ import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.infra.DBMessageBox;
 import com.aiforpet.tdogtdog.module.fcm.infra.MessageDistributorImpl;
 import org.junit.jupiter.api.*;
+
+
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -15,15 +22,39 @@ import java.io.PrintStream;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class MessageDistributorTest {
+
 
     private final MessageDistributor messageDistributor;
     private final MessageMaker messageMaker;
     private final DBMessageBox dbMessageBox;
     private final DBMessageBoxRepoHelper dbMessageBoxRepoHelper;
-    private final TestAccountRepository testAccountRepository;
+
+    @TestConfiguration
+    public static class TestConfig {
+
+        @Bean
+        @Primary
+        public Messenger mockMessenger() {
+            Messenger messenger = mock(Messenger.class);
+            doAnswer(new Answer<Void>() {
+                public Void answer(InvocationOnMock invocation) {
+                    Message message = invocation.getArgument(0);
+
+                    System.out.println(String.format("%s %s %s %s",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
+                    return null;
+                }
+            }).when(messenger).deliverMessage(any(Message.class));
+
+            return messenger;
+        }
+
+    }
+
+
 
     private final static String email = "test";
     private final static String token = "";
@@ -33,11 +64,10 @@ public class MessageDistributorTest {
 
 
     @Autowired
-    public MessageDistributorTest(MessageDistributorImpl distributor, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper, TestAccountRepository testAccountRepository) {
+    public MessageDistributorTest(MessageDistributorImpl distributor, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper) {
         this.messageDistributor = distributor;
         this.dbMessageBox = dbMessageBox;
         this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;
-        this.testAccountRepository = testAccountRepository;
         this.messageMaker = new MessageMaker();
     }
 
@@ -101,7 +131,7 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(2, dbMessageBoxRepoHelper.findAll().size());
-                    assertEquals(String.format("%s%n", messageMaker.getPushMessage(token)).repeat(8), outContent.toString());
+                    assertEquals(String.format("%s%n", messageMaker.getMessage(token)).repeat(8), outContent.toString());
                 });
 
     }
@@ -120,7 +150,7 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
-                    assertEquals(String.format("%s%n", messageMaker.getPushMessage(token)).repeat(3), outContent.toString());
+                    assertEquals(String.format("%s%n", messageMaker.getMessage(token)).repeat(3), outContent.toString());
                 });
     }
 
@@ -186,12 +216,4 @@ public class MessageDistributorTest {
                 });
 
     }
-
-
-
-    private Account getAccount(){
-        return testAccountRepository.findByEmail(email);
-    }
-
-
 }
