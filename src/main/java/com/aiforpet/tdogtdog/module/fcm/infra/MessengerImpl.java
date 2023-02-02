@@ -7,6 +7,7 @@ import com.aiforpet.tdogtdog.module.fcm.domain.exception.FCMErrorType;
 import com.aiforpet.tdogtdog.module.fcm.dto.PushMessageDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class MessengerImpl implements Messenger {
 
     private final HttpMessageMapper httpMessageMapper;
@@ -45,15 +47,14 @@ public class MessengerImpl implements Messenger {
 
         try {
             Map<String, Object> res = restTemplate.postForObject(this.firebaseUrl, entity, Map.class);
-            System.out.println(objectMapper.writeValueAsString(httpMessageDto));
 
             if(fcmErrorChecker.isError(res)){
                 FCMErrorType fcmErrorType = fcmErrorChecker.getErrorType(res);
                 fcmErrorHandler.handleError(fcmErrorType, message);
             }
-
-        }catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            else {
+                log.info(String.format("Push Success [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));
+            }
         }catch(HttpClientErrorException e) {
             int httpCode = e.getRawStatusCode();
 

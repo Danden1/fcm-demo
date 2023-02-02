@@ -3,9 +3,11 @@ package com.aiforpet.tdogtdog.module.fcm.infra;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.domain.exception.FCMErrorHandler;
 import com.aiforpet.tdogtdog.module.fcm.domain.exception.FCMErrorType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class FCMErrorHandlerImpl implements FCMErrorHandler {
 
     private final FCMDeviceRepository fcmDeviceRepository;
@@ -18,6 +20,8 @@ public class FCMErrorHandlerImpl implements FCMErrorHandler {
 
     @Override
     public void handleError(FCMErrorType fcmExceptionType, Message message) {
+        log.warn(String.format(fcmExceptionType.getErrorMessage(message)));
+
         System.out.println(fcmExceptionType.getErrorMessage(message));
         if(fcmExceptionType == FCMErrorType.UNREGISTERED){
             fcmDeviceRepository.deleteByDevice(message.getReceiveDevice());

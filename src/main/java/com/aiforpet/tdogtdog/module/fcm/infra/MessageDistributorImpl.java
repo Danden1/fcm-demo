@@ -3,6 +3,7 @@ package com.aiforpet.tdogtdog.module.fcm.infra;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.DestroyChecker;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.ResendChecker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class MessageDistributorImpl implements MessageDistributor {
 
     private final MessageBoxRepository messageBoxRepository;
@@ -37,17 +39,23 @@ public class MessageDistributorImpl implements MessageDistributor {
         List<MessageEntity> messageEntities = messageBoxRepository.findTop8ByOrderByIdAsc();
         List<Message> messages = new ArrayList<>();
 
+        log.info(String.format("Take Out %d messages.", messageEntities.size()));
+
         for(MessageEntity messageEntity : messageEntities) {
             Message message = messageEntityMapper.mapMessageEntitytoMessage(messageEntity);
             messageBoxRepository.delete(messageEntity);
 
             if(isDestroy(message)){
+                log.info(String.format("Destroy Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
                 continue;
             }
             if(isResend(message)){
+                log.info(String.format("Resend Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
                 messageBoxRepository.save(messageEntityMapper.mapMessageToMessageEntity(message));
                 continue;
             }
+
+            log.info(String.format("Valid Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
 
             messages.add(message);
         }
