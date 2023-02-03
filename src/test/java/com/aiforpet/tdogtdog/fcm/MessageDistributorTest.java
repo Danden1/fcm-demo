@@ -4,7 +4,6 @@ import com.aiforpet.tdogtdog.fcm.helper.*;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.infra.DBMessageBox;
-import com.aiforpet.tdogtdog.module.fcm.infra.MessageDistributorImpl;
 import org.junit.jupiter.api.*;
 
 
@@ -15,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -25,13 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@RecordApplicationEvents
 public class MessageDistributorTest {
-
-
-    private final MessageDistributor messageDistributor;
-    private final MessageMaker messageMaker;
-    private final DBMessageBox dbMessageBox;
-    private final DBMessageBoxRepoHelper dbMessageBoxRepoHelper;
 
     @TestConfiguration
     public static class TestConfig {
@@ -44,7 +38,7 @@ public class MessageDistributorTest {
                 public Void answer(InvocationOnMock invocation) {
                     Message message = invocation.getArgument(0);
 
-                    System.out.println(String.format("%s %s %s %s",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
+                    outContent.append(String.format("%s %s %s %s%n",message.getBody(), message.getTitle(), message.getData(), message.getReceiveDevice()));
                     return null;
                 }
             }).when(messenger).deliverMessage(any(Message.class));
@@ -55,16 +49,21 @@ public class MessageDistributorTest {
     }
 
 
+    private final MessageDistributor messageDistributor;
+    private final MessageMaker messageMaker;
+    private final DBMessageBox dbMessageBox;
+    private final DBMessageBoxRepoHelper dbMessageBoxRepoHelper;
+
 
     private final static String email = "test";
     private final static String token = "";
 
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private static StringBuffer outContent;
     private final PrintStream originalOut = System.out;
 
 
     @Autowired
-    public MessageDistributorTest(MessageDistributorImpl distributor, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper) {
+    public MessageDistributorTest(MessageDistributor distributor, DBMessageBox dbMessageBox, DBMessageBoxRepoHelper dbMessageBoxRepoHelper) {
         this.messageDistributor = distributor;
         this.dbMessageBox = dbMessageBox;
         this.dbMessageBoxRepoHelper = dbMessageBoxRepoHelper;
@@ -74,11 +73,10 @@ public class MessageDistributorTest {
 
     @BeforeEach
     public void beforeEach(){
-        System.setOut(new PrintStream(outContent));
+        outContent = new StringBuffer();
     }
     @AfterEach
     public void afterEach(){
-        System.setOut(originalOut);
         dbMessageBoxRepoHelper.deleteAllInBatch();
     }
 
@@ -108,7 +106,8 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessages();
+        dbMessageBox.eventMaker();
+
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -127,7 +126,10 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(10, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
+
+        dbMessageBox.eventMaker();
+
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(2, dbMessageBoxRepoHelper.findAll().size());
@@ -146,7 +148,8 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
+        dbMessageBox.eventMaker();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());
@@ -166,7 +169,8 @@ public class MessageDistributorTest {
                 .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
+        dbMessageBox.eventMaker();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
@@ -186,7 +190,8 @@ public class MessageDistributorTest {
                 .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
+        dbMessageBox.eventMaker();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(3, dbMessageBoxRepoHelper.findAll().size());
@@ -208,7 +213,8 @@ public class MessageDistributorTest {
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
 
-        messageDistributor.takeOutMessages();
+//        messageDistributor.takeOutMessages();
+        dbMessageBox.eventMaker();
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(0, dbMessageBoxRepoHelper.findAll().size());

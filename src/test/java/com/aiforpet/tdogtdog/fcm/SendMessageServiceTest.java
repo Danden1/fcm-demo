@@ -7,6 +7,7 @@ import com.aiforpet.tdogtdog.module.fcm.service.SendMessageService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -29,8 +30,13 @@ public class SendMessageServiceTest {
     private final TestNotificationRepository testNotificationRepository;
     private final TestAccountRepository testAccountRepository;
 
+    @MockBean
+    private MessageDistributor messageDistributor;
+
     private final static String email = "test";
     private final static String otherEmail = "other";
+
+    private final static String token = "";
     private final String title = "hi";
     private final String body = "hi";
     private final Map<String, Object> data = null;
@@ -55,7 +61,7 @@ public class SendMessageServiceTest {
         Account otherAccount = accountHelper.createAccount(otherEmail);
 
         List<String> testDevices = new ArrayList<>();
-        testDevices.add("123");
+        testDevices.add(token);
         testDevices.add("124");
         testDevices.add("125");
         List<String> otherDevices = new ArrayList<>();
@@ -127,7 +133,7 @@ public class SendMessageServiceTest {
         @DisplayName("특정 계정의 TEST 알림이 켜져있을 경우, 메시지가 박스에 들어가는 지 테스트 ")
         void testSendToTestOnDevice(){
             Account account = testAccountRepository.findByEmail(email);
-            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now(), LocalDateTime.now());
+            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
@@ -142,7 +148,7 @@ public class SendMessageServiceTest {
 
             Account account = testAccountRepository.findByEmail(otherEmail);
 
-            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now(), LocalDateTime.now());
+            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(0, dbMessageBoxRepoHelper.findAll().size()));

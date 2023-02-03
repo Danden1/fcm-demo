@@ -5,7 +5,7 @@ import com.aiforpet.tdogtdog.module.fcm.domain.checker.DestroyChecker;
 import com.aiforpet.tdogtdog.module.fcm.domain.checker.ResendChecker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class MessageDistributorImpl implements MessageDistributor {
+public class MessageDistributorImpl implements MessageDistributor{
 
     private final MessageBoxRepository messageBoxRepository;
     private final MessageEntityMapper messageEntityMapper;
@@ -32,18 +32,18 @@ public class MessageDistributorImpl implements MessageDistributor {
         this.messenger = messenger;
     }
 
+    @EventListener
+    public void takeMessages(MessageEvent messageEvent){
+        takeOutMessages(messageEvent.getMessages());
+    }
 
-    @Scheduled(fixedDelay = 100)
+
     @Transactional
-    public void takeOutMessages(){
-        List<MessageEntity> messageEntities = messageBoxRepository.findTop8ByOrderByIdAsc();
-        List<Message> messages = new ArrayList<>();
+    public void takeOutMessages(List<Message> messages){
+        List<Message> validMessages = new ArrayList<>();
+        log.info(String.format("Take Out %d messages.", messages.size()));
 
-        log.info(String.format("Take Out %d messages.", messageEntities.size()));
-
-        for(MessageEntity messageEntity : messageEntities) {
-            Message message = messageEntityMapper.mapMessageEntitytoMessage(messageEntity);
-            messageBoxRepository.delete(messageEntity);
+        for(Message message : messages) {;
 
             if(isDestroy(message)){
                 log.info(String.format("Destroy Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
@@ -57,10 +57,10 @@ public class MessageDistributorImpl implements MessageDistributor {
 
             log.info(String.format("Valid Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
 
-            messages.add(message);
+            validMessages.add(message);
         }
 
-        distributeMessages(messages);
+        distributeMessages(validMessages);
     }
 
     @Override
