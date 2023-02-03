@@ -58,7 +58,7 @@ class MessageDistributorTest {
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new ParameterNamesModule())
             .registerModule(new Jdk8Module())
-            .registerModule(new JavaTimeModule());;
+            .registerModule(new JavaTimeModule());
 
 
     @Autowired

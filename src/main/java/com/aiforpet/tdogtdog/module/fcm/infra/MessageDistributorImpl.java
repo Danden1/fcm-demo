@@ -47,39 +47,24 @@ public class MessageDistributorImpl implements MessageDistributor {
     }
 
 
+    @Override
     @KafkaListener(topics = "${spring.kafka.fcm.topic}", groupId = "${spring.kafka.fcm.group-id}")
-    public void takeOutMessages(List<Message> messages){
-        List<Message> validMessages = new ArrayList<>();
+    public void distributeMessages(List<Message> messages){
         log.info(String.format("Take Out %d messages.", messages.size()));
 
-        for(Message message : messages) {
-
-            if(isDestroy(message)){
-                log.info(String.format("Destroy Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
-                continue;
-            }
-            if(isResend(message)){
-                log.info(String.format("Resend Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
-                kafkaMessageBox.collectMessage(message);
-                continue;
-            }
-
-            log.info(String.format("Valid Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
-
-            validMessages.add(message);
-        }
-
-        distributeMessages(validMessages);
-    }
-
-    @Override
-    public void distributeMessages(List<Message> messages) {
         int messageCount = messages.size();
         Thread[] threads = new Thread[messageCount];
 
         for(int i = 0; i < messages.size(); i++){
-            int threadI = i;
-            threads[i] = new Thread(() -> messenger.deliverMessage(messages.get(threadI)));
+            Message message = messages.get(i);
+
+            threads[i] = new Thread(() -> {
+
+                if(isValidMessage(message)) {
+                    messenger.deliverMessage(message);
+                }
+            });
+
             threads[i].start();
         }
 
@@ -91,6 +76,20 @@ public class MessageDistributorImpl implements MessageDistributor {
             }
         }
     }
+
+    private boolean isValidMessage(Message message){
+        if(isDestroy(message)){
+            log.info(String.format("Destroy Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
+            return false;
+        }
+        if(isResend(message)){
+            log.info(String.format("Resend Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
+            kafkaMessageBox.collectMessage(message);
+            return false;
+        }
+        return true;
+    }
+
 
     private boolean isDestroy(Message message){
         for(DestroyChecker destroyChecker : destroyCheckers){
