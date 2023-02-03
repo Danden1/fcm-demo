@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -23,7 +24,9 @@ import javax.transaction.Transactional;
 public class KafkaMessageBox implements MessageBox {
 
     private final KafkaTemplate<String, Message> kafkaTemplate;
-    private final String TOPIC = "fcm";
+
+    @Value("${spring.kafka.fcm.topic}")
+    private String TOPIC;
 
     public KafkaMessageBox(KafkaTemplate<String, Message> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
@@ -32,8 +35,8 @@ public class KafkaMessageBox implements MessageBox {
     @Override
     @Async
     public void collectMessage(Message message) {
-        log.info(String.format("Collect Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));
         kafkaTemplate.send(TOPIC, message);
+        log.info(String.format("Collect Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));
 
     }
 

@@ -21,6 +21,7 @@ import java.util.Map;
 public class MessengerImpl implements Messenger {
 
     private final HttpMessageMapper httpMessageMapper;
+
     private final String firebaseUrl = "https://fcm.googleapis.com/fcm/send";
     private final String firebaseAuthKey = "";
 

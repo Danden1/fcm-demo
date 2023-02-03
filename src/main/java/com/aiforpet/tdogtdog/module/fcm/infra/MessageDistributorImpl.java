@@ -10,6 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,12 @@ import java.util.List;
 @Component
 @Slf4j
 public class MessageDistributorImpl implements MessageDistributor {
-    private final String TOPIC = "fcm";
+
+    @Value(value = "${spring.kafka.fcm.topic}")
+    private String TOPIC;
+    @Value(value = "${spring.kafka.fcm.group-id}")
+    private String GROUP_ID;
+
 
     private final MessageBox kafkaMessageBox;
 
@@ -41,10 +47,9 @@ public class MessageDistributorImpl implements MessageDistributor {
     }
 
 
-    @KafkaListener(topics = TOPIC, groupId = "fcm")
+    @KafkaListener(topics = "${spring.kafka.fcm.topic}", groupId = "${spring.kafka.fcm.group-id}")
     public void takeOutMessages(List<Message> messages){
         List<Message> validMessages = new ArrayList<>();
-
         log.info(String.format("Take Out %d messages.", messages.size()));
 
         for(Message message : messages) {

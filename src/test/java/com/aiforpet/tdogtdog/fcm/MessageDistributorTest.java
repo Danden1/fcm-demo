@@ -12,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,10 @@ import static org.mockito.Mockito.mock;
 @SpringBootTest
 @EmbeddedKafka(ports=9092)
 @ExtendWith(SpringExtension.class)
+@DisplayName("kafaka 테스트. 눈으로 보고 확인해야 함. 로그 참고. 세부적인 테스트가 어려움.")
 class MessageDistributorTest {
 
+//    @InjectMocks
     private final MessageDistributor messageDistributor;
     private final MessageMaker messageMaker;
     private final MessageBox kafkaMessageBox;
@@ -59,7 +62,7 @@ class MessageDistributorTest {
 
 
     @Autowired
-    public MessageDistributorTest(MessageDistributor distributor, MessageBox kafkaMessageBox) {
+    public MessageDistributorTest(MessageBox kafkaMessageBox, MessageDistributor distributor) {
         this.messageDistributor = distributor;
         this.kafkaMessageBox = kafkaMessageBox;
         this.messageMaker = new MessageMaker();
@@ -158,7 +161,6 @@ class MessageDistributorTest {
         }
 
 //        messageDistributor.takeOutMessages(messages);
-
         await().atMost(1, SECONDS)
                 .untilAsserted(() -> {
                     assertEquals(String.format("%s%n", messageMaker.getMessage(token)).repeat(3), outContent.toString());

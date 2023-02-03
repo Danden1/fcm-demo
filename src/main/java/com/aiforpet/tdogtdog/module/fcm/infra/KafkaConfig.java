@@ -22,12 +22,17 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
 
-    @Value(value = "${spring.kafka.bootstrap-servers}")
+    @Value(value = "${spring.kafka.fcm.bootstrap-servers}")
     private String bootstrapAddress;
 
-    private final static int BATCH_SIZE = 8;
+    @Value(value = "${spring.kafka.fcm.batch-size}")
+    private int BATCH_SIZE;
 
-    private final static int CONSUME_DELAY_MS = 100;
+    @Value(value = "${spring.kafka.fcm.consume-delay}")
+    private int CONSUME_DELAY_MS;
+
+    @Value(value = "${spring.kafka.fcm.group-id}")
+    private String GROUP_ID;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -69,7 +74,7 @@ public class KafkaConfig {
                 bootstrapAddress);
         props.put(
                 ConsumerConfig.GROUP_ID_CONFIG,
-                "fcm");
+                GROUP_ID);
         props.put(
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class);
@@ -81,7 +86,7 @@ public class KafkaConfig {
                 BATCH_SIZE);
         props.put(
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
-                "latest");
+                "earliest");
         props.put(
                 ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,
                 true);

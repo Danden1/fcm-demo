@@ -116,8 +116,6 @@ public class SendMessageServiceTest {
             Account testAccount = accountHelper.createAccount("test2");
             fcmDeviceHelper.createDevice(testAccount, "456", DeviceType.IOS, RequestLocation.KOREA);
 
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
-
 //            await().atMost(1, SECONDS)
 //                    .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
 
@@ -134,7 +132,7 @@ public class SendMessageServiceTest {
         @DisplayName("특정 계정의 TEST 알림이 켜져있을 경우, 메시지가 박스에 들어가는 지 테스트 ")
         void testSendToTestOnDevice(){
             Account account = testAccountRepository.findByEmail(email);
-            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now(), LocalDateTime.now());
+            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(3, 3));
