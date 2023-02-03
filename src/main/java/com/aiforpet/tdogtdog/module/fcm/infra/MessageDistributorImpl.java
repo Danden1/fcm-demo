@@ -19,14 +19,17 @@ public class MessageDistributorImpl implements MessageDistributor{
     private final MessageBoxRepository messageBoxRepository;
     private final MessageEntityMapper messageEntityMapper;
 
+    private final MessageBox messageBox;
+
     private final List<DestroyChecker> destroyCheckers;
     private final List<ResendChecker> resendCheckers;
 
     private final Messenger messenger;
 
-    public MessageDistributorImpl(MessageBoxRepository messageBoxRepository, MessageEntityMapper messageEntityMapper, @Autowired List<DestroyChecker> destroyCheckers, @Autowired List<ResendChecker> resendCheckers, Messenger messenger){
+    public MessageDistributorImpl(MessageBoxRepository messageBoxRepository, MessageEntityMapper messageEntityMapper, MessageBox messageBox, @Autowired List<DestroyChecker> destroyCheckers, @Autowired List<ResendChecker> resendCheckers, Messenger messenger){
         this.messageBoxRepository = messageBoxRepository;
         this.messageEntityMapper = messageEntityMapper;
+        this.messageBox = messageBox;
         this.destroyCheckers = destroyCheckers;
         this.resendCheckers = resendCheckers;
         this.messenger = messenger;
@@ -34,43 +37,28 @@ public class MessageDistributorImpl implements MessageDistributor{
 
     @EventListener
     public void takeMessages(MessageEvent messageEvent){
-        takeOutMessages(messageEvent.getMessages());
+        distributeMessages(messageEvent.getMessages());
     }
 
 
     @Transactional
-    public void takeOutMessages(List<Message> messages){
-        List<Message> validMessages = new ArrayList<>();
+    @Override
+    public void distributeMessages(List<Message> messages){
         log.info(String.format("Take Out %d messages.", messages.size()));
 
-        for(Message message : messages) {;
-
-            if(isDestroy(message)){
-                log.info(String.format("Destroy Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
-                continue;
-            }
-            if(isResend(message)){
-                log.info(String.format("Resend Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
-                messageBoxRepository.save(messageEntityMapper.mapMessageToMessageEntity(message));
-                continue;
-            }
-
-            log.info(String.format("Valid Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
-
-            validMessages.add(message);
-        }
-
-        distributeMessages(validMessages);
-    }
-
-    @Override
-    public void distributeMessages(List<Message> messages) {
         int messageCount = messages.size();
         Thread[] threads = new Thread[messageCount];
 
         for(int i = 0; i < messages.size(); i++){
-            int threadI = i;
-            threads[i] = new Thread(() -> messenger.deliverMessage(messages.get(threadI)));
+            Message message = messages.get(i);
+
+            threads[i] = new Thread(() -> {
+
+                if(isValidMessage(message)) {
+                    messenger.deliverMessage(message);
+                }
+            });
+
             threads[i].start();
         }
 
@@ -81,6 +69,19 @@ public class MessageDistributorImpl implements MessageDistributor{
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private boolean isValidMessage(Message message){
+        if(isDestroy(message)){
+            log.info(String.format("Destroy Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
+            return false;
+        }
+        if(isResend(message)){
+            log.info(String.format("Resend Message [title : %s, body : %s, data : %s, device : %s]", message.getTitle(), message.getBody(), message.getData(), message.getReceiveDevice()));;
+            messageBox.collectMessage(message);
+            return false;
+        }
+        return true;
     }
 
     private boolean isDestroy(Message message){
