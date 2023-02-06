@@ -3,16 +3,12 @@ package com.aiforpet.tdogtdog.fcm;
 import com.aiforpet.tdogtdog.fcm.helper.*;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
-import com.aiforpet.tdogtdog.module.fcm.infra.JpaAccountRepository;
-import com.aiforpet.tdogtdog.module.fcm.infra.JpaFCMDeviceRepository;
-import com.aiforpet.tdogtdog.module.fcm.infra.JpaNotificationSettingsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +17,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
 import java.io.ByteArrayOutputStream;
@@ -50,7 +45,7 @@ class MessageDistributorTest {
     private final static String email = "test";
     private final static String token = "123";
 
-    private final static ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
     private final PrintStream originalOut = System.out;
 
@@ -186,7 +181,6 @@ class MessageDistributorTest {
                     .untilAsserted(() -> {
                         assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Destroy Message %s", messageMaker.getMessage(token))) >= repeat);
                     });
-//            System.out.println(outContent);
         }
     }
 
