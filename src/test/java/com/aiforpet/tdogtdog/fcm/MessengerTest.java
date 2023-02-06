@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class MessengerTest {
@@ -64,6 +65,18 @@ public class MessengerTest {
 
         messenger.deliverMessage(message);
 
-        assertEquals(String.format("%s%n", messageMaker.getPushMessage(token)), outContent.toString());
+        assertTrue(outContent.toString().contains("Push Success"));
+    }
+
+    @Test
+    @DisplayName("비정상적인 token 테스트")
+    public void testInValidToken(){
+        MessageMaker messageMaker = new MessageMaker();
+
+        Message message = messageMaker.makeValidTestMessage("123");
+
+        messenger.deliverMessage(message);
+
+        assertTrue(outContent.toString().contains("Invalid Token"));
     }
 }

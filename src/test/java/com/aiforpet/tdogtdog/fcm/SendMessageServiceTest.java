@@ -5,20 +5,30 @@ import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.service.SendMessageService;
 import org.junit.jupiter.api.*;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 
 @SpringBootTest
@@ -40,6 +50,28 @@ public class SendMessageServiceTest {
     private final String title = "hi";
     private final String body = "hi";
     private final Map<String, Object> data = null;
+
+    private final static CopyOnWriteArrayList<Message> mockBox = new CopyOnWriteArrayList<>();
+
+    @TestConfiguration
+    public static class TestConfig {
+
+        @Bean
+        @Primary
+        public MessageBox mockMessageBox() {
+            MessageBox messageBox = mock(MessageBox.class);
+            doAnswer(new Answer<Void>() {
+                public Void answer(InvocationOnMock invocation) throws IOException {
+                    Message message = invocation.getArgument(0);
+                    mockBox.add(message);
+
+                    return null;
+                }
+            }).when(messageBox).collectMessage(any(Message.class));
+
+            return messageBox;
+        }
+    }
 
 
     @Autowired
@@ -75,6 +107,7 @@ public class SendMessageServiceTest {
         for(String otherDevice : otherDevices){
             fcmDeviceHelper.createDevice(otherAccount, otherDevice, DeviceType.IOS, RequestLocation.TEST_BETWEEN_TIME);
         }
+        mockBox.clear();
     }
 
     @AfterAll
@@ -93,7 +126,7 @@ public class SendMessageServiceTest {
             sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
-                    .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
+                    .untilAsserted(() -> assertEquals(5, mockBox.size()));
         }
 
         @Test
@@ -106,7 +139,7 @@ public class SendMessageServiceTest {
             sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
-                    .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
+                    .untilAsserted(() -> assertEquals(3, mockBox.size()));
         }
 
         @Test
@@ -118,12 +151,12 @@ public class SendMessageServiceTest {
             sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
-                    .untilAsserted(() -> assertEquals(5, dbMessageBoxRepoHelper.findAll().size()));
+                    .untilAsserted(() -> assertEquals(5, mockBox.size()));
 
             sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.KOREA, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
-                    .untilAsserted(() -> assertEquals(6, dbMessageBoxRepoHelper.findAll().size()));
+                    .untilAsserted(() -> assertEquals(6, mockBox.size()));
         }
     }
 
@@ -136,7 +169,7 @@ public class SendMessageServiceTest {
             sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
-                    .untilAsserted(() -> assertEquals(3, dbMessageBoxRepoHelper.findAll().size()));
+                    .untilAsserted(() -> assertEquals(3, mockBox.size()));
         }
 
         @Test
@@ -151,7 +184,7 @@ public class SendMessageServiceTest {
             sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
-                    .untilAsserted(() -> assertEquals(0, dbMessageBoxRepoHelper.findAll().size()));
+                    .untilAsserted(() -> assertEquals(0, mockBox.size()));
 
         }
     }
