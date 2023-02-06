@@ -166,11 +166,16 @@ public class SendMessageServiceTest {
             Account testAccount = accountHelper.createAccount("test2");
             fcmDeviceHelper.createDevice(testAccount, "456", DeviceType.IOS, RequestLocation.KOREA);
 
+            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
+
+            await().atMost(1, SECONDS)
+                    .untilAsserted(() -> assertEquals(5, mockBox.size()));
+
 
             sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.KOREA, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
 
             await().atMost(1, SECONDS)
-                    .untilAsserted(() -> assertEquals(1,mockBox.size()));
+                    .untilAsserted(() -> assertEquals(6,mockBox.size()));
         }
     }
 
