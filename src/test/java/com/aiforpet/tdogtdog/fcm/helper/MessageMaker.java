@@ -53,13 +53,7 @@ public class MessageMaker {
         return new Message("hi", "hi", data, receiver, constraint);
     }
 
-//    public String getPushMessage(String token){
-//        return String.format("{\"message\":{\"notification\":{\"title\":\"hi\",\"body\":\"hi\"},\"token\":\"%s\",\"data\":{\"hi\":123}}}", token);
-//    }
-    public String getPushMessage(String token){
-        return String.format("{\"to\":\"%s\",\"notification\":{\"title\":\"hi\",\"body\":\"hi\"},\"data\":{\"hi\":123}}", token);
-    }
     public String getMessage(String token){
-        return String.format("hi hi {hi=123} %s", token);
+        return String.format("[title : hi, body : hi, data : {hi=123}, device : %s]", token);
     }
 }

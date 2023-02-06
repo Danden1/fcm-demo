@@ -14,18 +14,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @Slf4j
 public class MessageDistributorImpl implements MessageDistributor {
-
-    @Value(value = "${spring.kafka.fcm.topic}")
-    private String TOPIC;
-    @Value(value = "${spring.kafka.fcm.group-id}")
-    private String GROUP_ID;
-
 
     private final MessageBox kafkaMessageBox;
 
@@ -48,16 +43,15 @@ public class MessageDistributorImpl implements MessageDistributor {
 
 
     @Override
+    @Transactional
     @KafkaListener(topics = "${spring.kafka.fcm.topic}", groupId = "${spring.kafka.fcm.group-id}")
     public void distributeMessages(List<Message> messages){
         log.info(String.format("Take Out %d messages.", messages.size()));
-
         int messageCount = messages.size();
         Thread[] threads = new Thread[messageCount];
 
         for(int i = 0; i < messages.size(); i++){
             Message message = messages.get(i);
-
             threads[i] = new Thread(() -> {
 
                 if(isValidMessage(message)) {

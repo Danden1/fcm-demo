@@ -86,7 +86,7 @@ public class KafkaConfig {
                 BATCH_SIZE);
         props.put(
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
-                "earliest");
+                "latest");
         props.put(
                 ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,
                 true);

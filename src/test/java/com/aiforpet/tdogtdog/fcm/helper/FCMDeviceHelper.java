@@ -30,7 +30,6 @@ public class FCMDeviceHelper {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
         testfcmDeviceRepository.save(fcmDevice);
 
         return fcmDevice.getDevice();

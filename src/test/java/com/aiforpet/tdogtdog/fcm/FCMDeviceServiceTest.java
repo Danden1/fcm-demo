@@ -7,9 +7,16 @@ import com.aiforpet.tdogtdog.fcm.helper.TestNotificationRepository;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
 import com.aiforpet.tdogtdog.module.fcm.service.FCMDeviceService;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Instant;
@@ -27,6 +34,21 @@ public class FCMDeviceServiceTest {
     private final TestFCMDeviceRepository testFCMDeviceRepository;
     private final TestNotificationRepository testNotificationRepository;
     private final String email = "test";
+
+    @MockBean
+    private MessageDistributor messageDistributor;
+    @MockBean
+    private ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory;
+    @MockBean
+    private KafkaAdmin kafkaAdmin;
+    @MockBean
+    private NewTopic newTopic;
+    @MockBean
+    private ProducerFactory<String, String> producerFactory;
+    @MockBean
+    private KafkaTemplate<String, String> kafkaTemplate;
+    @MockBean
+    private ConsumerFactory<? super String, ? super String> consumerFactory;
 
     @Autowired
     public FCMDeviceServiceTest(FCMDeviceService fcmDeviceService, AccountHelper accountHelper, TestAccountRepository testAccountRepository, TestFCMDeviceRepository testFCMDeviceRepository, TestNotificationRepository testNotificationRepository) {
