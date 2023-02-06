@@ -122,7 +122,7 @@ class MessageDistributorTest {
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> {
                         assertTrue(StringUtils.countMatches(outContent.toString(), "Valid Message") >= 8);
-                        assertTrue(StringUtils.countMatches(outContent.toString(), messageMaker.getMessage(token)) >= 8);
+                        assertTrue(StringUtils.countMatches(outContent.toString(), messageMaker.getMessage(token)) >= 8*2);
                     });
         }
 
@@ -139,8 +139,8 @@ class MessageDistributorTest {
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> {
-                        assertTrue(StringUtils.countMatches(outContent.toString(), "Valid Message") >= repeat);
-                        assertTrue(StringUtils.countMatches(outContent.toString(), messageMaker.getMessage(token)) >= repeat);
+                        assertTrue(StringUtils.countMatches(outContent.toString(), "Valid Message") == repeat);
+                        assertTrue(StringUtils.countMatches(outContent.toString(), messageMaker.getMessage(token)) == 2*repeat);
                     });
         }
     }
@@ -160,7 +160,7 @@ class MessageDistributorTest {
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> {
-                        assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Destroy Message %s", messageMaker.getMessage(token))) >= repeat);
+                        assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Destroy Message %s", messageMaker.getMessage(token))) == repeat);
                     });
 
 
@@ -179,7 +179,7 @@ class MessageDistributorTest {
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> {
-                        assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Destroy Message %s", messageMaker.getMessage(token))) >= repeat);
+                        assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Destroy Message %s", messageMaker.getMessage(token))) == repeat);
                     });
         }
     }
@@ -200,7 +200,7 @@ class MessageDistributorTest {
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> {
-                        assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Resend Message %s", messageMaker.getMessage(token))) >= repeat*2);
+                        assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Resend Message %s", messageMaker.getMessage(token))) >= repeat);
                         assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Collect Message %s", messageMaker.getMessage(token))) >= repeat*2);
                     });
         }
@@ -217,7 +217,7 @@ class MessageDistributorTest {
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> {
-                        assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Resend Message %s", messageMaker.getMessage(token))) >= repeat*2);
+                        assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Resend Message %s", messageMaker.getMessage(token))) >= repeat);
                         assertTrue(StringUtils.countMatches(outContent.toString(), String.format("Collect Message %s", messageMaker.getMessage(token))) >= repeat*2);
                     });
         }
