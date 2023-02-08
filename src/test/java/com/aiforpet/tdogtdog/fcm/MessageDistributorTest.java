@@ -22,7 +22,6 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.time.Duration;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;

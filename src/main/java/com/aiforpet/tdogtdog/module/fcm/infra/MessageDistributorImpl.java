@@ -43,7 +43,7 @@ public class MessageDistributorImpl implements MessageDistributor {
 
 
     @Override
-    @Transactional
+    @Transactional //필요 없는 거 같은데...
     @KafkaListener(topics = "${spring.kafka.fcm.topic}", groupId = "${spring.kafka.fcm.group-id}")
     public void distributeMessages(List<Message> messages){
         log.info(String.format("Take Out %d messages.", messages.size()));

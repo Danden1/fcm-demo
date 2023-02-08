@@ -3,11 +3,8 @@ package com.aiforpet.tdogtdog.module.fcm.domain;
 import com.aiforpet.tdogtdog.module.fcm.domain.exception.InvalidMessageException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Map;
 
 @Getter
@@ -29,25 +26,14 @@ public class Message {
         }
     }
 
-//    public Message(String title, String body, Map<String, Object> data, String receiveDevice, MessageConstraint messageConstraint) throws InvalidMessageException{
-//        this.title = title;
-//        this.body = body;
-//        this.data = data;
-//        this.receiver = receiver;
-//        this.messageConstraint = messageConstraint;
-//        if (!isValid()){
-//            throw new InvalidMessageException();
-//        }
-//    }
-
 
     @JsonIgnore
     public LocalDateTime getTimeLimit(){
         return messageConstraint.getTimeLimit();
     }
     @JsonIgnore
-    public LocalDateTime getRequestTime(){
-        return messageConstraint.getRequestTime();
+    public LocalDateTime getReservationTime(){
+        return messageConstraint.getReservationTime();
     }
 
     @JsonIgnore

@@ -34,7 +34,7 @@ public class FCMErrorHandlerImpl implements FCMErrorHandler {
         }
         else if(fcmExceptionType == FCMErrorType.DEVICE_MESSAGE_RATE_EXCEEDED){
             Receiver receiver = new Receiver(message.getReceiveDevice(), message.getDeviceType());
-            MessageConstraint messageConstraint = new MessageConstraint(message.getNotificationType(), message.getTimeLimit(), message.getRequestLocation(), message.getRequestTime().plusSeconds(1));
+            MessageConstraint messageConstraint = new MessageConstraint(message.getNotificationType(), message.getTimeLimit(), message.getRequestLocation(), message.getReservationTime().plusSeconds(1));
             Message delayMessage = new Message(message.getTitle(), message.getBody(), message.getData(),receiver, messageConstraint);
 
             messageBox.collectMessage(delayMessage);

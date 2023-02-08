@@ -102,6 +102,7 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory());
         factory.getContainerProperties().setIdleBetweenPolls(CONSUME_DELAY_MS);
         factory.setBatchListener(true);
+//        factory.setConcurrency(1);
         return factory;
     }
 }
