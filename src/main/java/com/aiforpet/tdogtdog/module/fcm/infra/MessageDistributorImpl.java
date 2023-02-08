@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -16,9 +17,6 @@ import java.util.List;
 @Slf4j
 public class MessageDistributorImpl implements MessageDistributor{
 
-    private final MessageBoxRepository messageBoxRepository;
-    private final MessageEntityMapper messageEntityMapper;
-
     private final MessageBox messageBox;
 
     private final List<DestroyChecker> destroyCheckers;
@@ -26,16 +24,14 @@ public class MessageDistributorImpl implements MessageDistributor{
 
     private final Messenger messenger;
 
-    public MessageDistributorImpl(MessageBoxRepository messageBoxRepository, MessageEntityMapper messageEntityMapper, MessageBox messageBox, @Autowired List<DestroyChecker> destroyCheckers, @Autowired List<ResendChecker> resendCheckers, Messenger messenger){
-        this.messageBoxRepository = messageBoxRepository;
-        this.messageEntityMapper = messageEntityMapper;
+    public MessageDistributorImpl(MessageBox messageBox, @Autowired List<DestroyChecker> destroyCheckers, @Autowired List<ResendChecker> resendCheckers, Messenger messenger){
         this.messageBox = messageBox;
         this.destroyCheckers = destroyCheckers;
         this.resendCheckers = resendCheckers;
         this.messenger = messenger;
     }
 
-    @EventListener
+    @TransactionalEventListener
     public void takeMessages(MessageEvent messageEvent){
         distributeMessages(messageEvent.getMessages());
     }

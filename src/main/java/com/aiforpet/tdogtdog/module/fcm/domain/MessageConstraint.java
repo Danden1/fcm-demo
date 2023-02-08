@@ -10,20 +10,20 @@ public class MessageConstraint {
     private final NotificationType notificationType;
     private final LocalDateTime timeLimit;
     private final RequestLocation requestLocation;
-    private final LocalDateTime requestTime;
+    private final LocalDateTime reservationTime;
 
-    public MessageConstraint(NotificationType notificationType, LocalDateTime timeLimit, RequestLocation requestLocation, LocalDateTime requestTime) throws InvalidMessageConstraintException{
+    public MessageConstraint(NotificationType notificationType, LocalDateTime timeLimit, RequestLocation requestLocation, LocalDateTime reservationTime) throws InvalidMessageConstraintException{
         this.notificationType = notificationType;
         this.timeLimit = timeLimit;
         this.requestLocation = requestLocation;
-        this.requestTime = requestTime;
+        this.reservationTime = reservationTime;
         if(!isValid()){
             throw new InvalidMessageConstraintException();
         }
     }
 
     private boolean isValid(){
-        if(this.getRequestLocation() == null || this.getNotificationType() == null || this.getTimeLimit() == null || this.requestTime == null){
+        if(this.getRequestLocation() == null || this.getNotificationType() == null || this.getTimeLimit() == null || this.reservationTime == null){
             return false;
         }
         return true;

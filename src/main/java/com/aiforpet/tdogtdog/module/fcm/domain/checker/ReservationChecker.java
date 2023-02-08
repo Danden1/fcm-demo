@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 public class ReservationChecker implements ResendChecker{
     @Override
     public boolean isResend(Message message) {
-        LocalDateTime requestTime = message.getRequestTime();
+        LocalDateTime requestTime = message.getReservationTime();
         ZoneId timeZone = message.getRequestLocation().getTimeZone();
         ZonedDateTime nowTime = ZonedDateTime.now(timeZone);
 

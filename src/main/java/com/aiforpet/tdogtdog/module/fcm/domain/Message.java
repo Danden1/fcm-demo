@@ -1,11 +1,8 @@
 package com.aiforpet.tdogtdog.module.fcm.domain;
 
 import com.aiforpet.tdogtdog.module.fcm.domain.exception.InvalidMessageException;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Map;
 
 public class Message {
@@ -29,8 +26,8 @@ public class Message {
     public LocalDateTime getTimeLimit(){
         return messageConstraint.getTimeLimit();
     }
-    public LocalDateTime getRequestTime(){
-        return messageConstraint.getRequestTime();
+    public LocalDateTime getReservationTime(){
+        return messageConstraint.getReservationTime();
     }
 
 
