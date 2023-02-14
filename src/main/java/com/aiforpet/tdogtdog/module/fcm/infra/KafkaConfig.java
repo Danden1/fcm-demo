@@ -4,6 +4,7 @@ import com.aiforpet.tdogtdog.module.fcm.domain.Message;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -25,11 +26,17 @@ public class KafkaConfig {
     @Value(value = "${spring.kafka.fcm.bootstrap-servers}")
     private String bootstrapAddress;
 
-    @Value(value = "${spring.kafka.fcm.batch-size}")
-    private int BATCH_SIZE;
+    @Value(value = "${spring.kafka.fcm.producer.batch-size}")
+    private int PRODUCER_BATCH_SIZE;
+    @Value(value = "${spring.kafka.fcm.producer.linger-ms}")
+    private int LINGER_MS;
 
-    @Value(value = "${spring.kafka.fcm.consume-delay}")
+    @Value(value = "${spring.kafka.fcm.consumer.delay}")
     private int CONSUME_DELAY_MS;
+    @Value(value = "${spring.kafka.fcm.consumer.batch-size}")
+    private int CONSUMER_BATCH_SIZE;
+    @Value(value = "${spring.kafka.fcm.consumer.number}")
+    private int CONSUMER_NUMBER;
 
     @Value(value = "${spring.kafka.fcm.group-id}")
     private String GROUP_ID;
@@ -40,6 +47,7 @@ public class KafkaConfig {
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         return new KafkaAdmin(configs);
     }
+
 
     @Bean
     public NewTopic topic1() {
@@ -58,6 +66,14 @@ public class KafkaConfig {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 CustomSerializer.class);
+        configProps.put(
+                ProducerConfig.BATCH_SIZE_CONFIG,
+                PRODUCER_BATCH_SIZE
+        );
+        configProps.put(
+          ProducerConfig.LINGER_MS_CONFIG,
+          LINGER_MS
+        );
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
@@ -83,7 +99,7 @@ public class KafkaConfig {
                 CustomDeserializer.class);
         props.put(
                 ConsumerConfig.MAX_POLL_RECORDS_CONFIG,
-                BATCH_SIZE);
+                CONSUMER_BATCH_SIZE);
         props.put(
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
                 "latest");
@@ -102,7 +118,7 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory());
         factory.getContainerProperties().setIdleBetweenPolls(CONSUME_DELAY_MS);
         factory.setBatchListener(true);
-//        factory.setConcurrency(1);
+        factory.setConcurrency(CONSUMER_NUMBER);
         return factory;
     }
 }

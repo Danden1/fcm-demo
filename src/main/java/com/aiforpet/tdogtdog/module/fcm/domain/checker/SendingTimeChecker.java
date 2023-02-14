@@ -13,6 +13,10 @@ public class SendingTimeChecker implements ResendChecker{
 
     @Override
     public boolean isResend(Message message) {
+        if(isIgnoreSendingTime(message.getNotificationType())){
+            return false;
+        }
+
         return isSendTimeOver(message.getRequestLocation());
     }
 
@@ -37,6 +41,14 @@ public class SendingTimeChecker implements ResendChecker{
         }
         else if(requestLocation == RequestLocation.TEST_OVER_TIME){
             return !ZonedDateTime.now().isAfter(ZonedDateTime.now().plus(5, ChronoUnit.MINUTES));
+        }
+
+        return false;
+    }
+
+    private boolean isIgnoreSendingTime(NotificationType notificationType){
+        if(notificationType == NotificationType.VIDEO_HEALTH_CHECK) {
+            return true;
         }
 
         return false;

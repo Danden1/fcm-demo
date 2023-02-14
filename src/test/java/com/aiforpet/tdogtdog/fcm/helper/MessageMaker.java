@@ -36,6 +36,14 @@ public class MessageMaker {
         return new Message("hi", "hi", data, receiver, constraint);
     }
 
+    public Message makeIgnoreSendingTimeMessage(String token){
+        MessageConstraint constraint = new MessageConstraint(NotificationType.VIDEO_HEALTH_CHECK, LocalDateTime.now().plus(1, ChronoUnit.HOURS), RequestLocation.TEST_OVER_TIME, LocalDateTime.now());
+        Receiver receiver = new Receiver(token, DeviceType.IOS);
+        Map<String, Object> data = new HashMap<>();
+        data.put("hi", 123);
+        return new Message("hi", "hi", data, receiver, constraint);
+    }
+
     public Message makeOverTimeLimitMessage(String token){
         MessageConstraint constraint = new MessageConstraint(NotificationType.TEST, LocalDateTime.now().minus(1, ChronoUnit.HOURS), RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now());
         Receiver receiver = new Receiver(token, DeviceType.IOS);

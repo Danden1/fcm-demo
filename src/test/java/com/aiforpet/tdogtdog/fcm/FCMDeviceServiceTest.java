@@ -146,7 +146,7 @@ public class FCMDeviceServiceTest {
             accountHelper.createAccount(email);
             Account account = testAccountRepository.findByEmail(email);
 
-            fcmDeviceService.updateAccountNotification(account, NotificationType.IMPORTANT, NotificationControl.OFF);
+            fcmDeviceService.updateNotificationSettings(account, NotificationType.IMPORTANT, NotificationControl.OFF);
 
             assertFalse(testNotificationRepository.findByAccount(account).getAvailableNotification().contains(NotificationType.IMPORTANT));
         }

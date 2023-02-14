@@ -3,6 +3,8 @@ package com.aiforpet.tdogtdog.fcm;
 import com.aiforpet.tdogtdog.fcm.helper.*;
 import com.aiforpet.tdogtdog.module.account.Account;
 import com.aiforpet.tdogtdog.module.fcm.domain.*;
+import com.aiforpet.tdogtdog.module.fcm.dto.MessageForAccountDto;
+import com.aiforpet.tdogtdog.module.fcm.dto.MessageForAllDto;
 import com.aiforpet.tdogtdog.module.fcm.service.SendMessageService;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.*;
@@ -14,19 +16,13 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -140,8 +136,14 @@ public class SendMessageServiceTest {
 
         @Test
         @DisplayName("모든 디바이스에 보낼 메시지가 박스에 들어가는 지 테스트")
-        void testSendToAllDevicesf(){
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
+        void testSendToAllDevices(){
+            MessageForAllDto messageDto = new MessageForAllDto();
+            messageDto.setTitle(title);
+            messageDto.setBody(body);
+            messageDto.setNotificationType(NotificationType.TEST);
+            messageDto.setRequestLocation(RequestLocation.TEST_BETWEEN_TIME);
+
+            sendMessageService.sendToAllDevice(messageDto);
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(5, mockBox.size()));
@@ -154,7 +156,13 @@ public class SendMessageServiceTest {
             otherNotification.updateNotification(NotificationType.TEST, NotificationControl.OFF);
             testNotificationRepository.save(otherNotification);
 
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
+            MessageForAllDto messageDto = new MessageForAllDto();
+            messageDto.setTitle(title);
+            messageDto.setBody(body);
+            messageDto.setNotificationType(NotificationType.TEST);
+            messageDto.setRequestLocation(RequestLocation.TEST_BETWEEN_TIME);
+
+            sendMessageService.sendToAllDevice(messageDto);
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(3, mockBox.size()));
@@ -166,13 +174,20 @@ public class SendMessageServiceTest {
             Account testAccount = accountHelper.createAccount("test2");
             fcmDeviceHelper.createDevice(testAccount, "456", DeviceType.IOS, RequestLocation.KOREA);
 
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
+            MessageForAllDto messageDto = new MessageForAllDto();
+            messageDto.setTitle(title);
+            messageDto.setBody(body);
+            messageDto.setNotificationType(NotificationType.TEST);
+            messageDto.setRequestLocation(RequestLocation.TEST_BETWEEN_TIME);
+
+            sendMessageService.sendToAllDevice(messageDto);
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(5, mockBox.size()));
 
+            messageDto.setRequestLocation(RequestLocation.KOREA);
 
-            sendMessageService.sendToAllDevice(NotificationType.TEST, body, title, data, RequestLocation.KOREA, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
+            sendMessageService.sendToAllDevice(messageDto);
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(6,mockBox.size()));
@@ -185,7 +200,13 @@ public class SendMessageServiceTest {
         @DisplayName("특정 계정의 TEST 알림이 켜져있을 경우, 메시지가 박스에 들어가는 지 테스트 ")
         void testSendToTestOnDevice(){
             Account account = testAccountRepository.findByEmail(email);
-            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now().plus(5, ChronoUnit.MINUTES), LocalDateTime.now());
+            MessageForAccountDto messageDto = new MessageForAccountDto();
+            messageDto.setEmail(email);
+            messageDto.setTitle(title);
+            messageDto.setBody(body);
+            messageDto.setNotificationType(NotificationType.TEST);
+            messageDto.setRequestLocation(RequestLocation.TEST_BETWEEN_TIME);
+            sendMessageService.sendToDevice(messageDto);
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(3, mockBox.size()));
@@ -200,7 +221,14 @@ public class SendMessageServiceTest {
 
             Account account = testAccountRepository.findByEmail(otherEmail);
 
-            sendMessageService.sendToDevice(account, NotificationType.TEST, body, title, data, RequestLocation.TEST_BETWEEN_TIME, LocalDateTime.now(), LocalDateTime.now());
+            MessageForAccountDto messageDto = new MessageForAccountDto();
+            messageDto.setEmail(otherEmail);
+            messageDto.setTitle(title);
+            messageDto.setBody(body);
+            messageDto.setNotificationType(NotificationType.TEST);
+            messageDto.setRequestLocation(RequestLocation.TEST_BETWEEN_TIME);
+
+            sendMessageService.sendToDevice(messageDto);
 
             await().atMost(1, SECONDS)
                     .untilAsserted(() -> assertEquals(0, mockBox.size()));

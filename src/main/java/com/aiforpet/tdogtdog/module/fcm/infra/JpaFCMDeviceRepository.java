@@ -9,15 +9,16 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public interface JpaFCMDeviceRepository extends JpaRepository<FCMDevice, Long>{
 
-    FCMDevice findByDevice(String token);
+    Optional<FCMDevice> findByDevice(String token);
     List<FCMDevice> findAllByRequestLocationAndNotificationSettings_AvailableNotificationContains(RequestLocation requestLocation, NotificationType notificationType);
     List<FCMDevice> findAllByAccount(Account account);
     void deleteByDevice(String token);
     void deleteByTimeLessThan(Instant time);
 
     @Query(value = "select notification_id from FCMDevice where device=?1", nativeQuery = true)
-    Long findNotificationIdByDevice(String device);
+    Optional<Long> findNotificationIdByDevice(String device);
 }

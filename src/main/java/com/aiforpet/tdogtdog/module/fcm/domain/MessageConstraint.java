@@ -23,7 +23,7 @@ public class MessageConstraint {
     }
 
     private boolean isValid(){
-        if(this.getRequestLocation() == null || this.getNotificationType() == null || this.getTimeLimit() == null || this.reservationTime == null){
+        if(this.getRequestLocation() == null || this.getNotificationType() == null || this.getTimeLimit() == null || this.reservationTime == null) {
             return false;
         }
         return true;

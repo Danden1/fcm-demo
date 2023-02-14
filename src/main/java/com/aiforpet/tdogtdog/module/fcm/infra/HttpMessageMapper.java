@@ -20,6 +20,8 @@ public class HttpMessageMapper implements MessageMapper {
 
         httpPushMessageDto.setNotification(notificationDto);
 
+        //TODO: DeviceType에 따른 설정 추가
+
         return httpPushMessageDto;
     }
 }

@@ -1,5 +1,7 @@
 package com.aiforpet.tdogtdog.module.fcm.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.time.ZoneId;
 
 public enum RequestLocation {
@@ -18,4 +20,10 @@ public enum RequestLocation {
     public ZoneId getTimeZone() {
         return timeZone;
     }
+
+    @JsonCreator
+    public static RequestLocation from(String value){
+        return RequestLocation.valueOf(value.toUpperCase());
+    }
+
 }

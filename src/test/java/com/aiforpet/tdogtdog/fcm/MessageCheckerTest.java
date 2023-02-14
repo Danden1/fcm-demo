@@ -110,6 +110,16 @@ public class MessageCheckerTest {
 
             assertTrue(sendingTimeChecker.isResend(message));
         }
+
+        @Test
+        @DisplayName("푸시 보내는 시간에 상관없이 무조건 보내야 되는 경우 테스트")
+        public void testIgnoreSendingTime(){
+            SendingTimeChecker sendingTimeChecker = new SendingTimeChecker();
+
+            Message message = messageMaker.makeIgnoreSendingTimeMessage("123");
+
+            assertFalse(sendingTimeChecker.isResend(message));
+        }
     }
 
     @Nested

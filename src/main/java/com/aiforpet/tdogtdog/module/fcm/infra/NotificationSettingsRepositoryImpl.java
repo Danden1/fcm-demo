@@ -20,7 +20,7 @@ public class NotificationSettingsRepositoryImpl implements NotificationSettingsR
 
     @Override
     public NotificationSettings findByAccount(Account account) {
-        return jpaNotificationRepository.findByAccount(account);
+        return jpaNotificationRepository.findByAccount(account).orElseThrow(() -> new NullPointerException("Not Exist Account"));
     }
 
     @Override

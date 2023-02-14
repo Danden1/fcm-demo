@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class FCMDeviceRepositoryImpl implements FCMDeviceRepository {
@@ -21,7 +22,7 @@ public class FCMDeviceRepositoryImpl implements FCMDeviceRepository {
     @Override
     public FCMDevice findByDevice(String device) {
 
-        return jpaFCMDeviceRepository.findByDevice(device);
+        return jpaFCMDeviceRepository.findByDevice(device).orElseThrow(() -> new NullPointerException("Not Exist device"));
     }
 
     @Override
@@ -47,9 +48,9 @@ public class FCMDeviceRepositoryImpl implements FCMDeviceRepository {
 
     @Override
     public NotificationSettings findNotificationSettingsByDevice(String device) {
-        Long notificationId = jpaFCMDeviceRepository.findNotificationIdByDevice(device);
+        Long notificationId = jpaFCMDeviceRepository.findNotificationIdByDevice(device).orElseThrow();
 
-        return jpaNotificationRepository.findNotificationById(notificationId);
+        return jpaNotificationRepository.findNotificationById(notificationId).orElseThrow(() -> new NullPointerException("Not Exist NotificationSettings for device"));
     }
 
 

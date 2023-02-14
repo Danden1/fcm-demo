@@ -15,7 +15,7 @@ public interface FCMDeviceService {
 
     Instant updateTime(String device);
 
-    Map<NotificationType, NotificationControl> updateAccountNotification(Account account, NotificationType notificationType, NotificationControl notificationSetting);
+    Map<NotificationType, NotificationControl> updateNotificationSettings(Account account, NotificationType notificationType, NotificationControl notificationSetting);
 
     String createDevice(Account account, String Device, DeviceType deviceType, RequestLocation requestLocation);
 

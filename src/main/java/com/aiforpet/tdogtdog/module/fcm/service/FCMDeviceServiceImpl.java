@@ -42,7 +42,7 @@ public class FCMDeviceServiceImpl implements FCMDeviceService{
 
     @Override
     @Transactional
-    public Map<NotificationType, NotificationControl> updateAccountNotification(Account account, NotificationType notificationType, NotificationControl notificationControl) {
+    public Map<NotificationType, NotificationControl> updateNotificationSettings(Account account, NotificationType notificationType, NotificationControl notificationControl) {
         NotificationSettings notification = notificationRepository.findByAccount(account);
 
         notification.updateNotification(notificationType, notificationControl);
